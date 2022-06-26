@@ -1,0 +1,14 @@
+.engagement-icons{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+.engagement-icon{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}

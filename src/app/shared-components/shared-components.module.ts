@@ -1,0 +1,27 @@
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { AvatarComponent } from './avatar/avatar.component';
+import { EngagementButtonsComponent } from './engagement-buttons/engagement-buttons.component';
+import { ImagePreviewModalComponent } from './image-preview-modal/image-preview-modal.component';
+import { ImageSliderComponent } from './image-slider/image-slider.component';
+import { OwnerBadgeComponent } from './owner-badge/owner-badge.component';
+
+@NgModule({
+  imports: [CommonModule, IonicModule],
+  declarations: [
+    OwnerBadgeComponent,
+    AvatarComponent,
+    EngagementButtonsComponent,
+    ImagePreviewModalComponent,
+    ImageSliderComponent,
+  ],
+  exports: [
+    OwnerBadgeComponent,
+    AvatarComponent,
+    EngagementButtonsComponent,
+    ImagePreviewModalComponent,
+    ImageSliderComponent,
+  ],
+})
+export class SharedComponentsModule {}

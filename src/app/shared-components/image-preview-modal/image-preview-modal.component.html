@@ -1,0 +1,10 @@
+<ion-slides class="swiper-zoom-container" [options]="slidesOpts">
+    <ion-slide >
+        <img [src]="image" alt="image-preview" />
+    </ion-slide>
+</ion-slides>
+<ion-buttons class="close-button">
+  <ion-button (click)="modalCtrl.dismiss()">
+    <ion-icon color="light" name="close"></ion-icon>
+  </ion-button>
+</ion-buttons>

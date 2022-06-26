@@ -1,0 +1,7 @@
+<div class="feed-images">
+  <ion-slides>
+    <ion-slide (click)="previewImage(image)" *ngFor="let image of images">
+      <img [src]="image" />
+    </ion-slide>
+  </ion-slides>
+</div>
