@@ -6,6 +6,8 @@ import { EngagementButtonsComponent } from './engagement-buttons/engagement-butt
 import { ImagePreviewModalComponent } from './image-preview-modal/image-preview-modal.component';
 import { ImageSliderComponent } from './image-slider/image-slider.component';
 import { OwnerBadgeComponent } from './owner-badge/owner-badge.component';
+import { TextContentComponent } from './text-content/text-content.component';
+import { VideoContentComponent } from './video-content/video-content.component';
 
 @NgModule({
   imports: [CommonModule, IonicModule],
@@ -15,6 +17,8 @@ import { OwnerBadgeComponent } from './owner-badge/owner-badge.component';
     EngagementButtonsComponent,
     ImagePreviewModalComponent,
     ImageSliderComponent,
+    TextContentComponent,
+    VideoContentComponent,
   ],
   exports: [
     OwnerBadgeComponent,
@@ -22,6 +26,8 @@ import { OwnerBadgeComponent } from './owner-badge/owner-badge.component';
     EngagementButtonsComponent,
     ImagePreviewModalComponent,
     ImageSliderComponent,
+    TextContentComponent,
+    VideoContentComponent,
   ],
 })
 export class SharedComponentsModule {}
