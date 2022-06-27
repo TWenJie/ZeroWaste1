@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">speba</string>
+    <string name="title_activity_main">speba</string>
+    <string name="package_name">my.usm.cs.zerowaste.speba</string>
+    <string name="custom_url_scheme">my.usm.cs.zerowaste.speba</string>
+</resources>

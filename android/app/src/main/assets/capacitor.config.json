@@ -1,0 +1,6 @@
+{
+	"appId": "my.usm.cs.zerowaste.speba",
+	"appName": "speba",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}
