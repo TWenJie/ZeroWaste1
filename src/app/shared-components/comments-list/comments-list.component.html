@@ -1,0 +1,16 @@
+<ion-card class="comment-card">
+  <ion-card-content>
+    <ion-row  *ngFor="let comment of comments">
+      <ion-col class="comments-container">
+        <app-owner-badge></app-owner-badge>
+        <span class="timestamp">6/2/2022</span>
+        <ion-buttons class="actions-btn">
+          <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+        </ion-buttons>
+      </ion-col>
+      <ion-col size="12">
+        <app-text-content [textContent]="comment.textContent"></app-text-content>
+      </ion-col>
+    </ion-row>
+  </ion-card-content>
+</ion-card>

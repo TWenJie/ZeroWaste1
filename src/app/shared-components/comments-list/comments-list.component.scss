@@ -1,0 +1,21 @@
+.comments-container{
+    border-top: 0.5px solid darkgray;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+    .actions-btn{
+        justify-self: end;
+    }
+
+    .timestamp{
+        font-size: small;
+        color: darkgray;
+        margin-top: 1.2rem;
+    }
+}
+
+.comment-card {
+    margin-bottom: 2em;
+
+}

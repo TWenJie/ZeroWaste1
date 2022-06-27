@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
     selector: 'app-text-content',
@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
     styleUrls: ['text-content.component.scss']
 })
 export class TextContentComponent implements OnInit{
+    @Input() textContent: string;
     constructor(){}
     ngOnInit(): void {
         

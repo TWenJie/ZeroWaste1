@@ -6,6 +6,40 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
     styleUrls: ['content-list.page.scss']
 })
 export class EZWCContentListPage implements OnInit, OnDestroy{
+
+    items = [
+        {
+            images: [
+                "/assets/img/ezwc_banner.png",
+                "/assets/img/environment_iaus.png",
+            ]
+        },
+        {
+            images: [
+                "/assets/img/ezwc_banner.png",
+                "/assets/img/environment_iaus.png",
+            ]
+        },
+        {
+            images: [
+                "/assets/img/ezwc_banner.png",
+                "/assets/img/environment_iaus.png",
+            ]
+        },
+        {
+            images: [
+                "/assets/img/ezwc_banner.png",
+                "/assets/img/environment_iaus.png",
+            ]
+        },
+        {
+            images: [
+                "/assets/img/ezwc_banner.png",
+                "/assets/img/environment_iaus.png",
+            ]
+        }
+    ];
+
     constructor(){}
 
     ngOnInit(): void {

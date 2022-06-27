@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { IonicModule } from "@ionic/angular";
+import { SharedComponentsModule } from "../shared-components/shared-components.module";
 import { EZWCContentDetailPage } from "./content-details/content-detail.page";
 import { EZWCContentListPage } from "./content-list/content-list.page";
 import { EZWCPageRoutingModule } from "./ezwc-routing.module";
@@ -10,7 +11,8 @@ import { EZWCWelcomePage } from "./welcome/welcome.page";
     imports: [
         CommonModule,
         IonicModule,
-        EZWCPageRoutingModule
+        EZWCPageRoutingModule,
+        SharedComponentsModule,
     ],
     declarations: [EZWCWelcomePage,EZWCContentListPage, EZWCContentDetailPage]
 })

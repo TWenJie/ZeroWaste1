@@ -1,0 +1,24 @@
+<div class="feeds-list-container">
+  <ion-card *ngFor="let item of items">
+    <ion-card-content>
+      <ion-row>
+        <ion-col class="feed">
+          <app-owner-badge></app-owner-badge>
+          <span class="timestamp">6/2/2022</span>
+          <ion-buttons class="actions-btn">
+            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="12">
+          <div  class="feed-content">
+            <app-text-content [textContent]="texts" (click)="openCommentsModal(item)"></app-text-content>
+            <app-image-slider [images]="item.images"></app-image-slider>
+          </div>
+        </ion-col>
+        <ion-col size="12">
+          <app-engagement-buttons (commentClickHandler)="openCommentsModal(item)"></app-engagement-buttons>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>

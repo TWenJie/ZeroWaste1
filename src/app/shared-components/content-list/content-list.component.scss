@@ -1,0 +1,22 @@
+.feeds-list-container{
+    background-color: lightgray;
+    padding: 10px 0;
+}
+
+.feed{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    .actions-btn{
+        justify-self: end;
+    }
+
+    .timestamp{
+        font-size: small;
+        color: darkgray;
+        margin-top: 1.2rem;
+    }
+}
+

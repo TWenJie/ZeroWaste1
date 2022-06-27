@@ -1,16 +1,16 @@
 .owner-badge{
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap:12px;
-    margin-top: 1rem;
-
+    padding-top: 1em;
     .name-tag{
+        float: right;
+        margin-left: 20px;
         h3{
+            margin-bottom: 0;
             font-size: larger;
         }
         span {
+            margin-top: 10px;
             color: var(--ion-color-primary);
-            font-size: small;
+            font-size: smaller;
         }
     }
 }
