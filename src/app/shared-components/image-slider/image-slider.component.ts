@@ -9,6 +9,10 @@ import { ImagePreviewModalComponent } from "../image-preview-modal/image-preview
 })
 export class ImageSliderComponent implements OnInit {
     
+    slidesOpts= {
+        
+    }
+
     @Input() images : string[];
     
     constructor(
