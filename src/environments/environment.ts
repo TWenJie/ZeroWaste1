@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: false, //set to true when release
   serviceURI: 'https://zerowaste.cs.usm.my/spebaapi',
 };
 
