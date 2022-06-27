@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons class="ion-text-center">
+      <ion-button (click)="modalCtrl.dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-title>Smartbin</ion-title>
+      <ion-button slot="end"> </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-item>
+    <!-- <img [src]="sanitizeURL(location.properties.imageUrl)"> -->
+    <ion-img [src]="location.properties.imageUrl"></ion-img>
+  </ion-item>
+  <ion-card>
+    <ion-card-header>
+      <h3>
+      {{location.properties.name}}
+      </h3>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{location.properties.descriptions}}</p>
+    </ion-card-content>
+    <ion-button
+      expand="block"
+      color="dark"
+      (click)="openExternal(location.properties.mapUrl)"
+    >
+      Open via Maps
+    </ion-button>
+    <ion-button
+    style="margin-top: 10px;"
+      expand="block"
+      color="danger"
+      (click)="createComplain()"
+    >
+      Create Complain
+    </ion-button>
+  </ion-card>
+  <ion-item>
+    <ion-label>
+      <ion-text>
+        <h3>Location Preview</h3>
+      </ion-text>
+    </ion-label>
+  </ion-item>
+
+  <div id="mapId" style="height:250px"></div>
+</ion-content>
