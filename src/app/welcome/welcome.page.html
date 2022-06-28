@@ -1,0 +1,25 @@
+<ion-content class="ion-padding ion-text-center" [fullscreen]="true">
+    <div class="container">
+        <div class="page-header">
+            <h1>Welcome to Zero Waste Awareness App</h1>
+        </div>
+        <img src="/assets/img/welcome.svg" alt="welcome">
+        <div class="buttons-container">
+            <ion-button 
+                expand="block" 
+                class="main-button"
+                routerLink="/auth/signin" routerDirection="forward"
+            >
+            Login
+            </ion-button>
+            <ion-button 
+                expand="block" 
+                color="dark" 
+                fill="clear"
+                routerLink="/auth/signup" routerDirection="forward"
+            >
+                Signup
+            </ion-button>
+        </div>
+    </div>
+</ion-content>

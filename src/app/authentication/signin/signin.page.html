@@ -1,0 +1,68 @@
+<ion-content>
+    <div class="bg-light">
+        <div class="pattern-background">
+            <ion-toolbar color="translucent">
+                <ion-buttons  slot="start">
+                    <ion-button color="light" class="backbtn" routerLink="/welcome" routerDirection="back">
+                        <ion-icon name="chevron-back-outline"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+            <div class="app-icon">
+                <img width="100" height="100" src="assets/icon/icon.png" alt="">
+            </div>
+
+        </div>
+        <div class="form-card">
+            <h2>Sign up</h2>
+            <form class="form-container" #signinForm="ngForm" (ngSubmit)="onSubmit(signinForm)">
+                <ion-item>
+                    <ion-label position="floating">Email</ion-label>
+                    <ion-input
+                        ngModel 
+                        name="email" 
+                        required
+                        minlength="6"
+                        clearInput
+                    ></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label position="floating">Password</ion-label>
+                    <ion-input type="password"
+                        ngModel name="password"
+                        required
+                        minglenth="6"
+                    ></ion-input>
+                </ion-item>
+                <ion-button expand="block" 
+                    class="main-button"
+                    type="submit"
+                    [disabled]="!signinForm.valid"
+                >
+                    Login
+                </ion-button>
+
+                <div class="sign-up">
+                    Don't have an account?
+                    <ion-button
+                        color="dark"
+                        fill="clear"
+                        routerLink="/auth/signup" routerDirection="forward"
+                    >
+                        Sign up
+                    </ion-button>
+                </div>
+            </form>
+        </div>
+        <div class="app-footer">
+            <!-- <p>Nurfitri</p> -->
+            <div class="forgot-password">
+                <ion-button color="primary" fill="clear"
+                (click)="onForgotPassword()"
+                >
+                    forgot password ?
+                </ion-button>
+            </div>
+        </div>
+    </div>
+</ion-content>

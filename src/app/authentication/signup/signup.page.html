@@ -1,0 +1,78 @@
+<ion-content>
+    <div class="bg-light">
+        <div class="pattern-background">
+            <ion-toolbar color="translucent">
+                <ion-buttons  slot="start">
+                    <ion-button color="light" class="backbtn" routerLink="/welcome" routerDirection="back">
+                        <ion-icon name="chevron-back-outline"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+            <div class="app-icon">
+                <img width="100" height="100" src="assets/icon/icon.png" alt="">
+            </div>
+
+        </div>
+        <div class="form-card">
+            <h1>Sign up</h1>
+            <form #signUpForm="ngForm" (ngSubmit)="onSignUp(signUpForm)" class="form-container">
+                <ion-item>
+                    <ion-label position="floating">Email</ion-label>
+                    <ion-input
+                      #emailCtrl="ngModel" 
+                      ngModel 
+                      name="email" 
+                      required 
+                      email 
+                    ></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">Username</ion-label>
+                  <ion-input type="username"
+                      ngModel
+                      name="username"
+                      required
+                      mingLength="6"
+                      #usernameCtrl="ngModel"
+                  ></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label position="floating">Password</ion-label>
+                    <ion-input
+                      ngModel
+                      name="password"
+                      required
+                      mingLength="6"
+                      #passwordCtrl="ngModel" 
+                      type="password"
+                    ></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="floating">Confirm Password</ion-label>
+                  <ion-input
+                    ngModel
+                    name="cpassword"
+                    required
+                    mingLength="6"
+                    #cpasswordCtrl="ngModel" 
+                    type="password"
+                  ></ion-input>
+                </ion-item>
+                <ion-button type="submit" [disabled]="!signUpForm.valid" expand="block" class="main-button">
+                    sign up
+                </ion-button>
+
+                <div class="sign-up">
+                    Already have an account?
+                    <ion-button
+                        color="dark"
+                        fill="clear"
+                        routerLink="/auth/signin" routerDirection="forward"
+                    >
+                        Login
+                    </ion-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ion-content>

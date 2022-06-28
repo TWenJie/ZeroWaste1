@@ -1,4 +1,3 @@
-import { Profiler } from "inspector";
 
 export interface AuthedUser{
     id: number;
