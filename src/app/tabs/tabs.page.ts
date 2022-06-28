@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActionSheetController, ModalController } from "@ionic/angular";
 import { CreateEventComponent } from "../content-crud/create-event/create-event.component";
 import { CreateFeedComponent } from "../content-crud/create-feed/create-feed.component";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
     selector: 'app-tabs',
@@ -11,6 +12,8 @@ import { CreateFeedComponent } from "../content-crud/create-feed/create-feed.com
 export class TabsPage implements OnInit, OnDestroy {
 
     private _user: any;
+
+    toggleTheme:string = 'dark';
 
     tabs = [
         {
@@ -46,10 +49,10 @@ export class TabsPage implements OnInit, OnDestroy {
     ]
 
     public appPages = [
-        { title: 'Profile', url: '/folder/Inbox', icon: 'person' },
-        { title: 'Account', url: '/folder/Outbox', icon: 'settings' },
-        { title: 'Themes', url: '/folder/Favorites', icon: 'color-fill' },
-        { title: 'Logout', url: '/folder/Archived', icon: 'log-out' },
+        { title: 'Profile', url: '/profile', icon: 'person' },
+        { title: 'Account', url: '/account', icon: 'settings' },
+        { title: 'Themes', onClick: this.onToggleTheme.bind(this), icon: 'color-fill' },
+        { title: 'Logout', onClick:  this.onLogout.bind(this) , icon: 'log-out' },
         { title: 'Trash', url: '/folder/Trash', icon: 'trash' },
         { title: 'Spam', url: '/folder/Spam', icon: 'warning' },
       ];
@@ -58,8 +61,9 @@ export class TabsPage implements OnInit, OnDestroy {
     constructor(
         private actionSheetCtrl: ActionSheetController,
         private modalCtrl: ModalController,
+        private authService: AuthService,
     ){
-
+        // console.log( 'suth_service:', authService) ;
     }
 
     ngOnInit(): void {
@@ -68,6 +72,22 @@ export class TabsPage implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         
+    }
+
+    onLogout(){
+        // console.log('Logging out...');
+        this.authService.logout();
+    }
+
+    onToggleTheme(){
+        console.log('Toggle Theme')
+        if(this.toggleTheme == 'dark'){
+            document.body.classList.add('dark');
+            this.toggleTheme = 'light';
+        }else{
+            document.body.classList.remove('dark');
+            this.toggleTheme = 'dark';
+        }
     }
 
     async presentActionSheet(){

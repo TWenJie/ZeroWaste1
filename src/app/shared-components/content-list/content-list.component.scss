@@ -1,5 +1,5 @@
 .feeds-list-container{
-    background-color: lightgray;
+    background-color: var(--ion-color-lightgray);
     padding: 10px 0;
 }
 
@@ -15,7 +15,7 @@
 
     .timestamp{
         font-size: small;
-        color: darkgray;
+        color: var(--ion-color-darkgray);
         margin-top: 1.2rem;
     }
 }
