@@ -23,7 +23,17 @@ const routes: Routes = [
                 path:'calendar',
                 loadChildren: () => import('../calendar/calendar.module').then(m=>m.CalendarPageModule)
             },
+            {
+                path: '',
+                redirectTo: '/tabs/feeds',
+                pathMatch: 'full'
+            }
         ]
+    },
+    {
+        path: '',
+        redirectTo: '/tabs/feeds',
+        pathMatch: 'full'
     }
 ];
 
