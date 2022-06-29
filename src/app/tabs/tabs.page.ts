@@ -3,6 +3,8 @@ import { ActionSheetController, ModalController } from "@ionic/angular";
 import { CreateEventComponent } from "../content-crud/create-event/create-event.component";
 import { CreateFeedComponent } from "../content-crud/create-feed/create-feed.component";
 import { AuthService } from "src/app/services/auth.service";
+import { User } from "../interfaces/user.class";
+import { Subscription } from "rxjs";
 
 @Component({
     selector: 'app-tabs',
@@ -11,7 +13,8 @@ import { AuthService } from "src/app/services/auth.service";
 })
 export class TabsPage implements OnInit, OnDestroy {
 
-    private _user: any;
+    public user: User;
+    private _subscriptions: Subscription [] = [];
 
     toggleTheme:string = 'dark';
 
@@ -53,10 +56,10 @@ export class TabsPage implements OnInit, OnDestroy {
         { title: 'Account', url: '/account', icon: 'settings' },
         { title: 'Themes', onClick: this.onToggleTheme.bind(this), icon: 'color-fill' },
         { title: 'Logout', onClick:  this.onLogout.bind(this) , icon: 'log-out' },
-        { title: 'Trash', url: '/folder/Trash', icon: 'trash' },
-        { title: 'Spam', url: '/folder/Spam', icon: 'warning' },
+        // { title: 'Trash', url: '/folder/Trash', icon: 'trash' },
+        // { title: 'Spam', url: '/folder/Spam', icon: 'warning' },
       ];
-    //   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+    public labels = ['approved', 'reported', 'pending'];
 
     constructor(
         private actionSheetCtrl: ActionSheetController,
@@ -71,8 +74,22 @@ export class TabsPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        
+        this._subscriptions.forEach(sub=>{
+            if(sub){
+                console.log('ubsubscribe',sub);
+                sub.unsubscribe();
+            }
+        })
     }
+
+    ionViewWillEnter(){
+
+        this._subscriptions['authUser'] = this.authService.user.subscribe((user:User)=>{
+            this.user = user;
+        });
+
+    }
+
 
     onLogout(){
         // console.log('Logging out...');
@@ -133,7 +150,7 @@ export class TabsPage implements OnInit, OnDestroy {
         const modal = await this.modalCtrl.create({
             component: modalComponent,
             componentProps: {
-                user: this._user,
+                user: this.user,
             }
         })
         await modal.present();
