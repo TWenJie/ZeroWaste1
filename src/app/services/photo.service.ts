@@ -5,8 +5,6 @@ import {
   CameraSource,
   Photo,
 } from '@capacitor/camera';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Storage } from '@capacitor/storage';
 
 
 export interface CapturedPhoto {

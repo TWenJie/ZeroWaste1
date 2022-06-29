@@ -11,6 +11,9 @@ import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
+import { Drivers } from '@ionic/storage';
+import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -18,7 +21,9 @@ import { IonicStorageModule } from '@ionic/storage-angular';
     IonicModule.forRoot(), 
     AppRoutingModule, 
     HttpClientModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot({
+      driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB]
+    })
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
