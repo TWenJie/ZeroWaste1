@@ -8,29 +8,45 @@
     </div>
   </ion-toolbar>
   <ion-toolbar color="leaf">
-    <ion-searchbar> </ion-searchbar>
+    <ion-searchbar
+    (ionInput)="localSearch($event)"
+    (ionBlur)="remoteSearch($event)"
+    > </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-buttons>
-      <ion-fab-button color="leaf" (click)="nearMe()">
+      <ion-fab-button color="leaf" (click)="findNearMe()">
         <ion-icon name="location-outline"></ion-icon>
       </ion-fab-button>
     </ion-buttons>
   </ion-fab>
 
-  <div class="content-container">
-    <ion-card (click)="openLocationModal(item)" class="preview-card" *ngFor="let item of items">
+  <div *ngIf="paginationResponse" class="content-container">
+    <ion-card  (click)="openLocationModal(item)" class="preview-card" *ngFor="let item of paginationResponse.results">
     <ion-card-content>
         <div class="preview-container">
-            <img class="preview-image" width="120"  src="assets/img/ezwc_banner.png" alt="">
+            <img class="preview-image" width="120"  [src]="item.properties.imageUrl ?? 'assets/img/ezwc_banner.png'" alt="">
             <div class="preview-info">
-                <h1>Smartbin Title Very Very Long Text example so Lorem ipsum dolor sit amet. </h1>
-                <p>smartbin</p>
+                <h1>{{item.properties.name}}</h1>
+                <p>coordinates: <br> {{item.location.coordinates[0]}} {{item.location.coordinates[1]}}</p>
             </div>
         </div>
     </ion-card-content>
   </ion-card>
   </div>
+
+  <!-- infinite scroll  -->
+  <ion-infinite-scroll
+  threshold="2%"
+  (ionInfinite)="paginateNext($event)"
+  >
+  <ion-infinite-scroll-content
+    loadingSpinner="bubbles"
+    loadingText="Loading more..."
+  >
+
+  </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
