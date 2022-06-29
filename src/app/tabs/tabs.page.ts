@@ -97,7 +97,6 @@ export class TabsPage implements OnInit, OnDestroy {
     }
 
     onToggleTheme(){
-        console.log('Toggle Theme')
         if(this.toggleTheme == 'dark'){
             document.body.classList.add('dark');
             this.toggleTheme = 'light';

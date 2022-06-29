@@ -3,7 +3,7 @@
     <ion-content>
 
       <ion-list *ngIf="user" class="user-badge" >
-        <app-avatar [height]="50" [width]="50"></app-avatar>
+        <app-avatar [image]="user.profile.avatar" [height]="50" [width]="50"></app-avatar>
         <ion-list-header>{{user.profile.fullname ?? ''}}</ion-list-header>
         <ion-note>@{{user.profile.username ?? 'nurfitri'}}</ion-note>
       </ion-list>
