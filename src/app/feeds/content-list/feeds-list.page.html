@@ -2,7 +2,7 @@
   <ion-toolbar >
     <ion-buttons slot="start">
       <ion-menu-button>
-        <app-avatar></app-avatar>
+        <app-avatar *ngIf="user" [image]="user.profile.avatar"></app-avatar>
       </ion-menu-button>
     </ion-buttons>
     <ion-title class="ion-text-center">Feeds</ion-title>

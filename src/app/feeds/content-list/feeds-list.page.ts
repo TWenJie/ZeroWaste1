@@ -1,4 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
+import { User } from "src/app/interfaces/user.class";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
     selector: 'app-feeds-list',
@@ -6,6 +9,10 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
     styleUrls: ['feeds-list.page.scss']
 })
 export class FeedsListPage implements OnInit, OnDestroy {
+
+    private _subscriptions: Subscription [] = [];
+
+    user:User;
     title = 'Feeds';
     items = [
         {
@@ -40,13 +47,26 @@ export class FeedsListPage implements OnInit, OnDestroy {
         }
     ];
 
-    constructor(){}
+    constructor(
+        private authService: AuthService,
+    ){}
 
     ngOnInit(): void {
         
     }
 
     ngOnDestroy(): void {
-        
+        this._subscriptions.forEach(sub=>{
+            if(sub){
+                console.log('unsubscribe',sub);
+                sub.unsubscribe();
+            }
+        })
+    }
+
+    ionViewWillEnter(){
+        this._subscriptions['user'] = this.authService.user.subscribe((user:User)=>{
+            this.user = user;
+        });
     }
 }
