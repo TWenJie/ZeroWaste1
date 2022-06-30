@@ -51,12 +51,14 @@ export interface Comment {
     post : Post;
 }
 
-export interface LikeResponse{
+export interface Like{
     authorId:number;
     postId: number;
     deletedAt: Date;
     createdAt: Date;
     updatedAt: Date;
+    post?: Post;
+    author?: UserProfile;
 }
 
 

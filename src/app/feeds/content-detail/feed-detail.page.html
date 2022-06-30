@@ -1,0 +1,17 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons class="ion-text-center">
+        <ion-button (click)="goBack()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+        <ion-title>Comments</ion-title>
+        <ion-button slot="end" >
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <app-content-details [item]="item" ></app-content-details>
+    <app-comments-list *ngIf="paginationResponse" [comments]="paginationResponse.results"></app-comments-list>
+</ion-content>

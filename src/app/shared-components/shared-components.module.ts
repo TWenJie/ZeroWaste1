@@ -35,6 +35,8 @@ import { VideoContentComponent } from './video-content/video-content.component';
     TextContentComponent,
     VideoContentComponent,
     ContentListComponent,
+    ContentDetailsComponent,
+    CommentsListComponent,
   ],
 })
 export class SharedComponentsModule {}

@@ -1,9 +1,9 @@
-<ion-card class="comment-card">
+<ion-card *ngIf="comments.length > 0" class="comment-card">
   <ion-card-content>
     <ion-row  *ngFor="let comment of comments">
       <ion-col class="comments-container">
-        <app-owner-badge></app-owner-badge>
-        <span class="timestamp">6/2/2022</span>
+        <app-owner-badge [userProfile]="comment.author"></app-owner-badge>
+        <span class="timestamp">{{comment.createdAt | date : 'mediumDate' ?? 'recently'}}</span>
         <ion-buttons class="actions-btn">
           <ion-icon name="ellipsis-vertical-outline"></ion-icon>
         </ion-buttons>
@@ -14,3 +14,7 @@
     </ion-row>
   </ion-card-content>
 </ion-card>
+
+<div class="no-comments" *ngIf="comments.length < 1">
+  No comments...
+</div>

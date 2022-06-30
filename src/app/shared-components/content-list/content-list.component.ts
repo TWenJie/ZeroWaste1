@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { ModalController } from "@ionic/angular";
+import { Post } from "src/app/interfaces/feeds.interface";
 import { ContentDetailsComponent } from "../content-details/content-details.component";
 
 @Component({
@@ -19,26 +21,25 @@ export class ContentListComponent implements OnInit{
     standing.`;
 
     constructor(
-        private modalCtrl: ModalController,
+        private router : Router,
     ){}
 
     ngOnInit(): void {
         console.log('Content_list:',this.items)
     }
 
-    clickContentHandler(item:any){
-        console.log('Content clicked:',item);
-        this.openCommentsModal(item);
+    openDetailPage(item:Post){
+        this.router.navigate(['tabs','feeds',item.id]);
     }
 
-    async openCommentsModal(item:any){
-        const modal = await this.modalCtrl.create({
-            component: ContentDetailsComponent,
-            componentProps: {
-                item,
-            }
-        })
+    // async openCommentsModal(item:any){
+    //     const modal = await this.modalCtrl.create({
+    //         component: ContentDetailsComponent,
+    //         componentProps: {
+    //             item,
+    //         }
+    //     })
 
-        await modal.present();
-    }
+    //     await modal.present();
+    // }
 }
