@@ -20,5 +20,5 @@
         <ion-title size="large">{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header> -->
-  <app-content-list [items]="items"></app-content-list>
+  <app-content-list *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
 </ion-content>

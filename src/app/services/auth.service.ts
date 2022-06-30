@@ -18,7 +18,7 @@ export class AuthService implements OnDestroy {
     private _AUTH_URI = `${environment.serviceURI}/auth`;
     private _isAuthed$ : BehaviorSubject <boolean> = new BehaviorSubject<boolean>(false);
     private _user$ : BehaviorSubject<User> = new BehaviorSubject<User>(null);
-    private _token$: BehaviorSubject<string> = new BehaviorSubject<string>(null); 
+    private _token: string = null; 
     private _activeLogoutTimer: any;
 
 
@@ -37,8 +37,8 @@ export class AuthService implements OnDestroy {
         return this._user$.asObservable();
     }
 
-    get token() : Observable<string>{
-        return this._token$.asObservable();
+    get token() : string{
+        return this._token
     }
 
     get isAuthed(): Observable<boolean> {
@@ -46,7 +46,7 @@ export class AuthService implements OnDestroy {
             map((user:any)=>{
                 if(!user) return false;
                 const accessToken = user.accessToken;
-                this._token$.next(accessToken);
+                this._token = accessToken;
                 return !!accessToken; //cast to boolean
             })
         )
@@ -78,7 +78,7 @@ export class AuthService implements OnDestroy {
         }
         this._user$.next(null);
         this._isAuthed$.next(false);
-        this._token$.next(null);
+        this._token=null;
     
         Storage.remove({key:'AUTH_USER'}); 
         Storage.remove({key:'ACCESS_TOKEN'});
@@ -114,7 +114,7 @@ export class AuthService implements OnDestroy {
                 );
                 const expiredIn = user.tokenExpiresIn;
                 this._user$.next(user);
-                this._token$.next(user.accessToken);
+                this._token=user.accessToken;
                 return !!user;
             })
         )
@@ -214,7 +214,7 @@ export class AuthService implements OnDestroy {
             tap(user=>{
                 if(user){
                     user.accessToken = token;
-                    this._token$.next(token);
+                    this._token=token;
                     return from (Storage.set({key:'ACCESS_TOKEN',value: token}));
                 }
             })

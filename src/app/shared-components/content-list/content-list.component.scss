@@ -20,3 +20,17 @@
     }
 }
 
+.event-heading{
+    padding: 1em;
+    border: 1px dashed var(--ion-color-lightgray);
+    border-radius: 10px;
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    .event-title{
+        color: var(--ion-color-primary);
+    }
+    .event-time {
+        font-weight: bold;
+    }
+}
