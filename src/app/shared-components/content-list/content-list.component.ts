@@ -1,8 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Router } from "@angular/router";
-import { ModalController } from "@ionic/angular";
 import { Post } from "src/app/interfaces/feeds.interface";
-import { ContentDetailsComponent } from "../content-details/content-details.component";
 
 @Component({
     selector: 'app-content-list',
@@ -12,14 +10,8 @@ import { ContentDetailsComponent } from "../content-details/content-details.comp
 export class ContentListComponent implements OnInit{
 
     @Input() items: any [];
-
-    texts = `USM is committed to mainstream sustainable development
-    principles in the university's core areas to produce graduates
-    and staff with first-class skills and thinking, research par
-    excellence, <a target="_blank" href="https://www.google.com">community</a> engagement and best practices that will
-    make USM a <span class="highlighted">sustainability-led university</span> of world-class
-    standing.`;
-
+    @Output() onRefreshList: EventEmitter<null> = new EventEmitter();
+    @Output() onLoadMoreList: EventEmitter<null> = new EventEmitter();
     constructor(
         private router : Router,
     ){}
@@ -32,14 +24,12 @@ export class ContentListComponent implements OnInit{
         this.router.navigate(['tabs','feeds',item.id]);
     }
 
-    // async openCommentsModal(item:any){
-    //     const modal = await this.modalCtrl.create({
-    //         component: ContentDetailsComponent,
-    //         componentProps: {
-    //             item,
-    //         }
-    //     })
+    onRefresh(event){
+        event.target.complete();
+        this.onRefreshList.emit();
+    }
 
-    //     await modal.present();
-    // }
+    onLoadMore(event){
+        this.onLoadMoreList.emit(event)
+    }
 }

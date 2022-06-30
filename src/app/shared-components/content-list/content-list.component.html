@@ -1,29 +1,26 @@
 <div class="feeds-list-container">
-  <ion-card *ngFor="let item of items">
-    <ion-card-content>
-      <ion-row>
-        <ion-col class="feed">
-          <app-owner-badge [userProfile]="item.author"></app-owner-badge>
-          <span class="timestamp">{{ item.createdAt | date: 'mediumDate' ?? 'recently'}}</span>
-          <ion-buttons class="actions-btn">
-            <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-          </ion-buttons>
-        </ion-col>
-        <ion-col size="12">
-          <div  class="feed-content">
-            <app-text-content [textContent]="item.textContent" (click)="openDetailPage(item)"></app-text-content>
-            <div *ngIf="item?.title" class="event-heading">
-              <h4 class="event-title">{{item.title}}</h4>
-              <p class="event-time" *ngIf="item.startTime"> start: {{item.startTime | date:'mediumDate' || 'none'}}</p>
-              <p class="event-time" *ngIf="item.endTime"> end: {{item.endTime | date:'mediumDate'}}</p>
-            </div>
-            <app-image-slider [images]="[item.resourceURL]"></app-image-slider>
-          </div>
-        </ion-col>
-        <ion-col size="12">
-          <app-engagement-buttons (commentClickHandler)="openDetailPage(item)"></app-engagement-buttons>
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
+  <!-- pull down refresh content  -->
+  <ion-refresher slot="fixed" 
+  pullMin="200"
+  (ionRefresh)="onRefresh($event)"
+  >
+  <ion-refresher-content
+    refreshingSpinner="circles"
+    refreshingText="Refreshing...">
+  </ion-refresher-content>
+  </ion-refresher>
+
+  <app-content-details *ngFor="let item of items" (onClickContent)="openDetailPage($event)" [item]="item"></app-content-details>
+
+  <!-- infinite scroll  -->
+  <ion-infinite-scroll
+      (ionInfinite)="onLoadMore($event)"
+      >
+    <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more..."
+      >
+
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </div>

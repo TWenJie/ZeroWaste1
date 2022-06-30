@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Post } from "src/app/interfaces/feeds.interface";
@@ -23,6 +23,7 @@ export class FeedsListPage implements OnInit, OnDestroy {
     pagination: PaginationOptions;
     paginationResponse : PaginationResponse<Post>;
 
+    @ViewChild('feedsContentList') feedsContentList;
     constructor(
         private authService: AuthService,
         private feedsService: FeedsService,
@@ -44,7 +45,7 @@ export class FeedsListPage implements OnInit, OnDestroy {
 
     ionViewWillEnter(){
         this.pagination = {
-            limit: 5,
+            limit:100,
             page: 0,
         }
         this._subscriptions['user'] = this.authService.user.subscribe((user:User)=>{
@@ -55,13 +56,30 @@ export class FeedsListPage implements OnInit, OnDestroy {
         this.fetchPosts();
     }
 
-    fetchPosts(){
+    fetchPosts(event=null){
+        console.log('Pagination:',this.pagination);
         this._subscriptions['posts'] = this.feedsService.paginate(this.pagination).subscribe((response: PaginationResponse<Post>)=>{
             this.paginationResponse = response;
-            console.log(this.paginationResponse)
+            console.log(this.paginationResponse);
+
+            if(event){
+                event.target.complete();
+            }
         },error=>{
             this.fetchErrorHandler(error);
         })
+    }
+
+
+    fetchNext(event){
+        //switc case filter, then fetch;
+        let {totalPages} = this.paginationResponse;
+        if(this.pagination.page >= (totalPages -1)){
+            if(event) event.target.complete();
+            return;
+        }
+        this.pagination.page = this.pagination.page + 1;
+        this.fetchPosts(event);
     }
 
     async presentToast(message){
@@ -75,5 +93,15 @@ export class FeedsListPage implements OnInit, OnDestroy {
     fetchErrorHandler(error){
         let message = error.error.message ?? 'Unable to fetch posts';
         this.presentToast(message);
+    }
+
+    onRefreshList(){
+        //Switch on filters, then fetchpost
+        this.pagination.page = 0;
+        this.fetchPosts();
+    }
+
+    listDidScroll(event){
+        // console.log('Scrilling:',this.feedsContentList);
     }
 }

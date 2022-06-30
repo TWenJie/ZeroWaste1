@@ -1,7 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { Comment } from 'src/app/interfaces/feeds.interface';
-import { ReactionsService } from 'src/app/services/reactions.service';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-content-details',
@@ -10,17 +7,21 @@ import { ReactionsService } from 'src/app/services/reactions.service';
 })
 export class ContentDetailsComponent implements OnInit {
   @Input() item: any;
+  @Output() onClickContent: EventEmitter<any> = new EventEmitter();
+
   isCreateCommentModalOpen = false;
 
-  @ViewChild('commentModal') createCommentModal : HTMLIonModalElement;
   constructor() {}
 
   ngOnInit(): void {
 
   }
 
-  createComment(){
-    // console.log(this.createCommentModal);
-    this.createCommentModal.dismiss();
+  openDetailPage(){
+    if(this.onClickContent){
+      this.onClickContent.emit(this.item);
+    }
   }
+
+  
 }

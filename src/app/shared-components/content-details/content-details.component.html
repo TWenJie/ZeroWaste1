@@ -10,7 +10,7 @@
       </ion-col>
       <ion-col size="12">
         <div  class="feed-content">
-          <app-text-content [textContent]="item.textContent"></app-text-content>
+          <app-text-content [textContent]="item.textContent" (click)="openDetailPage()"></app-text-content>
           <div *ngIf="item?.title" class="event-heading">
             <h4 class="event-title">{{item.title}}</h4>
             <p class="event-time" *ngIf="item.startTime"> start: {{item.startTime | date:'mediumDate' || 'none'}}</p>
@@ -20,62 +20,10 @@
         </div>
       </ion-col>
       <ion-col size="12">
-        <app-engagement-buttons></app-engagement-buttons>
+        <app-engagement-buttons (commentClickHandler)="openDetailPage(item)"></app-engagement-buttons>
       </ion-col>
     </ion-row>
   </ion-card-content>
 </ion-card>
 
 
-<!-- create comment button  -->
-<ion-toolbar id="open-modal" class="reply-container">
-  <ion-title>
-    <div class="reply">
-      Comment to this...
-    </div>
-  </ion-title>
-  <ion-buttons slot="end">
-    <ion-button>
-      <ion-icon name="arrow-redo"></ion-icon>
-    </ion-button>
-  </ion-buttons>
-</ion-toolbar>
-
-<!-- create comment modal  -->
-<ion-modal 
-  #commentModal
-  trigger="open-modal"
-  [breakpoints]="[0, 0.2 , 0.25, 0.5, 0.75]"
-  [initialBreakpoint]="0.2"
->
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons>
-          <ion-button (click)="commentModal.dismiss()"  slot="start">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <ion-button (click)="createComment()"  slot="start">
-            <ion-icon name="send"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <ion-textarea 
-        (click)="commentModal.setCurrentBreakpoint(0.5)"
-        [autoGrow]="true"
-        autoFocus="true"
-        enterkeyhint="send"
-        inputmode="text"
-        placeholder="comment texts ..."
-        maxlength="250"
-        minlength="2"
-        >
-
-      </ion-textarea>
-    </ion-content>
-  </ng-template>
-</ion-modal>

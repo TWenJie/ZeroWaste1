@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { NavController } from "@ionic/angular";
 import { Subscription } from "rxjs";
@@ -18,6 +18,8 @@ export class FeedDetailPage implements OnInit, OnDestroy {
     paginationResponse: PaginationResponse<Comment>;
 
     item: Post;
+
+    @ViewChild('commentModal') createCommentModal : HTMLIonModalElement;
     constructor(
         private route: ActivatedRoute,
         private navCtrl: NavController,
@@ -58,5 +60,9 @@ export class FeedDetailPage implements OnInit, OnDestroy {
                 this.paginationResponse = response;
             })
         }
+    }
+
+    createComment(){
+        this.createCommentModal.dismiss();
     }
 }

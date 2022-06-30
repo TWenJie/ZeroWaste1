@@ -14,11 +14,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content #feedContent (ionScroll)="listDidScroll($event)" [fullscreen]="true" [scrollEvents]="true">
   <!-- <ion-header collapse="condense">
       <ion-toolbar>
         <ion-title size="large">{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header> -->
-  <app-content-list *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
+  <app-content-list #feedsContentList (onLoadMoreList)="fetchNext($event)" (onRefreshList)="onRefreshList()" *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
 </ion-content>

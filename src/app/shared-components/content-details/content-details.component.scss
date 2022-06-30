@@ -20,20 +20,6 @@
     padding: 10px 0;
 }
 
-.reply-container{
-    position: fixed;
-    bottom: 0;
-}
-
-.reply {
-    padding: 5px 15px;
-    // border: darkgray 0.5px solid;
-    border-radius: 25px;
-    background-color: rgba(65, 65, 65,0.2);
-    // color: white;
-    font-size: small;
-}
-
 .event-heading{
     padding: 1em;
     border: 1px dashed var(--ion-color-lightgray);
