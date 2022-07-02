@@ -13,10 +13,12 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { Drivers } from '@ionic/storage';
 import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+import { SharedDirectivesModule } from './directives/shared-directives.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    SharedDirectivesModule,
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule, 

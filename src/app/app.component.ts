@@ -8,13 +8,23 @@ import { CachingService } from './services/caching.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-
+  private youtubeApiLoaded: boolean = false;
   constructor(
     private cachingService: CachingService,
     private platform: Platform,
   ) {
     this.cachingService.initStorage();
+    // this.initYoutubeApi();
     // this.initImageCacheDir();
+  }
+
+  initYoutubeApi(){
+    if(!this.youtubeApiLoaded){
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(tag);
+      this.youtubeApiLoaded = true;
+    }
   }
 
   async initImageCacheDir(){

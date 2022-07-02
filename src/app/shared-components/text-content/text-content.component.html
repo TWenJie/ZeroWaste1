@@ -1,2 +1,4 @@
-<p *ngIf="textContent" [innerHTML]="textContent" class="feeds-text">
-</p>
+<div id="textContainer"  class="feeds-text" *ngIf="parsedTexts?.textContent">
+    <p [innerHTML]="parsedTextContent"></p>
+</div>
+

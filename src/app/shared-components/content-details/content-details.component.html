@@ -16,7 +16,8 @@
             <p class="event-time" *ngIf="item.startTime"> start: {{item.startTime | date:'mediumDate' || 'none'}}</p>
             <p class="event-time" *ngIf="item.endTime"> end: {{item.endTime | date:'mediumDate'}}</p>
           </div>
-          <app-image-slider [images]="[item.resourceURL]"></app-image-slider>
+          <div [appAnchorPreview]="item.textContent"></div>
+          <app-image-slider *ngIf="item.resourceURL" [images]="[item.resourceURL]"></app-image-slider>
         </div>
       </ion-col>
       <ion-col size="12">

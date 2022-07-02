@@ -1,7 +1,7 @@
 <div class="feed-images">
   <ion-slides [options]="slidesOpts" [pager]="true">
     <ion-slide (click)="previewImage(image)" *ngFor="let image of images">
-      <img [src]="image" />
+      <img [src]="image" onerror="this.remove()" />
     </ion-slide>
   </ion-slides>
 
