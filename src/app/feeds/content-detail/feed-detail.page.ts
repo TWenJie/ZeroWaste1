@@ -4,6 +4,7 @@ import { NavController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Comment, Post } from "src/app/interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "src/app/interfaces/pagination.interface";
+import { ContentActionsService } from "src/app/services/content-actions.service";
 import { ReactionsService } from "src/app/services/reactions.service";
 
 @Component({
@@ -24,6 +25,7 @@ export class FeedDetailPage implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private navCtrl: NavController,
         private reactionsService: ReactionsService,
+        private contentActionsService: ContentActionsService,
     ){}
 
     ngOnInit(): void {
@@ -64,5 +66,10 @@ export class FeedDetailPage implements OnInit, OnDestroy {
 
     createComment(){
         this.createCommentModal.dismiss();
+    }
+
+
+    contentActionsHandler(item){
+        this.contentActionsService.showActions(item);
     }
 }

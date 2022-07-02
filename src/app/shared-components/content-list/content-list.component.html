@@ -10,7 +10,7 @@
   </ion-refresher-content>
   </ion-refresher>
 
-  <app-content-details *ngFor="let item of items" (onClickContent)="openDetailPage($event)" [item]="item"></app-content-details>
+  <app-content-details (onClickContentActions)="handleContentActions($event)" #contentDetail *ngFor="let item of items" (onClickContent)="openDetailPage($event)" [item]="item"></app-content-details>
 
   <!-- infinite scroll  -->
   <ion-infinite-scroll

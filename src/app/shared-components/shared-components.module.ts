@@ -12,7 +12,6 @@ import { ImagePreviewModalComponent } from './image-preview-modal/image-preview-
 import { ImageSliderComponent } from './image-slider/image-slider.component';
 import { OwnerBadgeComponent } from './owner-badge/owner-badge.component';
 import { TextContentComponent } from './text-content/text-content.component';
-import { VideoContentComponent } from './video-content/video-content.component';
 
 @NgModule({
   imports: [CommonModule, IonicModule,SharedDirectivesModule,YouTubePlayerModule],
@@ -23,7 +22,6 @@ import { VideoContentComponent } from './video-content/video-content.component';
     ImagePreviewModalComponent,
     ImageSliderComponent,
     TextContentComponent,
-    VideoContentComponent,
     ContentListComponent,
     ContentDetailsComponent,
     CommentsListComponent,
@@ -35,7 +33,6 @@ import { VideoContentComponent } from './video-content/video-content.component';
     ImagePreviewModalComponent,
     ImageSliderComponent,
     TextContentComponent,
-    VideoContentComponent,
     ContentListComponent,
     ContentDetailsComponent,
     CommentsListComponent,

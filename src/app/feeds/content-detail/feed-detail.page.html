@@ -12,7 +12,7 @@
 </ion-header>
 
 <ion-content>
-    <app-content-details [item]="item" ></app-content-details>
+    <app-content-details (onClickContentActions)="contentActionsHandler($event)" [item]="item" ></app-content-details>
     <app-comments-list *ngIf="paginationResponse" [comments]="paginationResponse.results"></app-comments-list>
 
     <!-- create comment button  -->

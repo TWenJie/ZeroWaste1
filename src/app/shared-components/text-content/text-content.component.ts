@@ -23,17 +23,17 @@ export class TextContentComponent implements OnInit, AfterViewInit{
     ngOnInit(): void {
         this.parsedTexts = this.URLExtractorService.parseTextforAnchor(this.textContent);
 
-        console.log('inside_textContent:',this.parsedTexts);
+        // console.log('inside_textContent:',this.parsedTexts);
         this.parsedTexts.resources.forEach(resource=>{
             this.parsedTexts.textContent = this.parsedTexts.textContent
             .replace(resource.anchor,`<a class="highlighted" data-name="${resource.text}">${resource.text}</a>`)
         })
         this.parsedTextContent = this.sanitizer.bypassSecurityTrustHtml(this.parsedTexts.textContent);
-        console.log('textContent',this.parsedTexts.textContent);
+        // console.log('textContent',this.parsedTexts.textContent);
     }
 
     ngAfterViewInit(): void {
-        console.log('after view init')
+        // console.log('after view init')
         this.parsedTexts.resources.forEach(resource=>{
             if(this.elementRef.nativeElement.querySelector(`[data-name="${resource.text}"]`)){
                 this.elementRef.nativeElement.querySelector(`[data-name="${resource.text}"]`).addEventListener('click',()=>{
@@ -45,7 +45,7 @@ export class TextContentComponent implements OnInit, AfterViewInit{
     }
 
     async onURLClicked(url){
-        console.log('Testing OnClick:',url);
+        // console.log('Testing OnClick:',url);
         await Browser.open({url});
     }
 }

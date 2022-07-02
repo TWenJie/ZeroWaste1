@@ -69,7 +69,7 @@ export class URLExtractorService {
     parseTextForYoutube(texts) : ParsedYoutubeContent {
         const matches = this._URLRegex.exec(texts);
         let url = matches?.[0];
-        console.log('matches',matches);
+        // console.log('matches',matches);
         //check if parsed url is youtube or external url.
         if(!url){
             return;

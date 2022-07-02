@@ -1,11 +1,13 @@
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Post } from "src/app/interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "src/app/interfaces/pagination.interface";
 import { User } from "src/app/interfaces/user.class";
 import { AuthService } from "src/app/services/auth.service";
+import { ContentActionsService } from "src/app/services/content-actions.service";
 import { FeedsService } from "src/app/services/feeds.service";
+import { ContentDetailsComponent } from "src/app/shared-components/content-details/content-details.component";
 
 @Component({
     selector: 'app-feeds-list',
@@ -23,11 +25,16 @@ export class FeedsListPage implements OnInit, OnDestroy {
     pagination: PaginationOptions;
     paginationResponse : PaginationResponse<Post>;
 
+    //for video autoplay/stop when scrolling
     @ViewChild('feedsContentList') feedsContentList;
+    private _currentPlayingVideoComp = null;
+    private _currentPlayingVideoRef = null;
+
     constructor(
         private authService: AuthService,
         private feedsService: FeedsService,
         private toastCtrl: ToastController,
+        private contentActionsService: ContentActionsService,
     ){}
 
     ngOnInit(): void {
@@ -101,7 +108,53 @@ export class FeedsListPage implements OnInit, OnDestroy {
         this.fetchPosts();
     }
 
+    contentActionsHandler(item){
+        this.contentActionsService.showActions(item);
+    }
+
+    /**
+     * Handling scrolling events to tigger video auto play/paused
+     * @param event 
+     */
     listDidScroll(event){
         // console.log('Scrilling:',this.feedsContentList);
+        if(this._currentPlayingVideoRef && this.isElementInView(this._currentPlayingVideoRef)) return;
+        if(this._currentPlayingVideoComp && !this.isElementInView(this._currentPlayingVideoRef)){
+            this._currentPlayingVideoComp.pause();
+            this._currentPlayingVideoRef = null;
+            this._currentPlayingVideoComp = null;
+
+            console.log('stopping video');
+        }
+
+        // console.log('Looping ....',this.feedsContentList);
+
+        this.feedsContentList.contentDetailRef.forEach((element:ElementRef<ContentDetailsComponent>,index : number)=>{
+            if(this._currentPlayingVideoComp) return;
+            const contentDetailElement  = element.nativeElement;
+            const isInView = this.isElementInView(contentDetailElement);
+            
+            if(!isInView) return;
+            // console.log('CurrentVideoComp:',this._currentPlayingVideoComp);
+            if(this.feedsContentList.contentDetailComp.get(index).youtubePlayer){
+                // console.log('getting Youtube player');
+                this._currentPlayingVideoRef = contentDetailElement;
+                this._currentPlayingVideoComp = this.feedsContentList.contentDetailComp.get(index);
+            }
+        })
+
+    }
+
+    /**
+     * Check if video element is in view or outside of view
+     */
+    isElementInView(element){
+        const rec = element.getBoundingClientRect();
+        return (
+            rec.top >= 0 &&
+            rec.left >= 0 &&
+            rec.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rec.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
     }
 }

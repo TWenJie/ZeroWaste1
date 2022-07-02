@@ -4,7 +4,7 @@
       <ion-col class="feed">
         <app-owner-badge [userProfile]="item.author"></app-owner-badge>
         <span class="timestamp">{{ item.createdAt | date: 'mediumDate' ?? 'recently'}}</span>
-        <ion-buttons class="actions-btn">
+        <ion-buttons (click)="openContentActions()" class="actions-btn">
           <ion-icon name="ellipsis-vertical-outline"></ion-icon>
         </ion-buttons>
       </ion-col>
@@ -16,7 +16,17 @@
             <p class="event-time" *ngIf="item.startTime"> start: {{item.startTime | date:'mediumDate' || 'none'}}</p>
             <p class="event-time" *ngIf="item.endTime"> end: {{item.endTime | date:'mediumDate'}}</p>
           </div>
-          <div [appAnchorPreview]="item.textContent"></div>
+
+          <youtube-player class="w-full" *ngIf="videoContent?.videoId"
+            #YTPlayer
+            [height]="240"
+            [width]="320"
+            [videoId]="videoContent.videoId"
+            (stateChange)="onVideoStateChange($event)"
+            >
+              
+          </youtube-player>
+          
           <app-image-slider *ngIf="item.resourceURL" [images]="[item.resourceURL]"></app-image-slider>
         </div>
       </ion-col>

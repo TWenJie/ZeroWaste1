@@ -7,6 +7,9 @@ import { AnchorPreviewDirective } from "./anchor/anchor-preview.directive";
         CommonModule,
     ],
     declarations: [AnchorPreviewDirective],
-    exports: [AnchorPreviewDirective]
+    exports: [AnchorPreviewDirective],
+    providers: [
+        AnchorPreviewDirective
+    ]
 })
 export class SharedDirectivesModule{}

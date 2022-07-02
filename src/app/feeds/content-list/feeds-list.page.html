@@ -7,7 +7,7 @@
     </ion-buttons>
     <ion-title class="ion-text-center">Feeds</ion-title>
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="fetchPosts()">
         <ion-icon name="analytics-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -20,5 +20,5 @@
         <ion-title size="large">{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header> -->
-  <app-content-list #feedsContentList (onLoadMoreList)="fetchNext($event)" (onRefreshList)="onRefreshList()" *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
+  <app-content-list (contentActionsHandler)="contentActionsHandler($event)" #feedsContentList (onLoadMoreList)="fetchNext($event)" (onRefreshList)="onRefreshList()" *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
 </ion-content>
