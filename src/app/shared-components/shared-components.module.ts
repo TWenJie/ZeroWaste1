@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 import { IonicModule } from '@ionic/angular';
+import { SharedDirectivesModule } from '../directives/shared-directives.module';
 import { AvatarComponent } from './avatar/avatar.component';
 import { CommentsListComponent } from './comments-list/comments-list.component';
 import { ContentDetailsComponent } from './content-details/content-details.component';
@@ -13,7 +15,7 @@ import { TextContentComponent } from './text-content/text-content.component';
 import { VideoContentComponent } from './video-content/video-content.component';
 
 @NgModule({
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule,SharedDirectivesModule,YouTubePlayerModule],
   declarations: [
     OwnerBadgeComponent,
     AvatarComponent,

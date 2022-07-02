@@ -1,4 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
+import {  ParsedYoutubeContent } from "src/app/services/url-extractor.service";
+import { YouTubePlayer } from '@angular/youtube-player';
 
 @Component({
     selector: 'app-video-component',
@@ -6,6 +8,7 @@ import { Component, OnInit } from "@angular/core";
     styleUrls: ['video-content.component.scss']
 })
 export class VideoContentComponent implements OnInit{
+    @Input() videoContent: ParsedYoutubeContent;
     constructor(){}
     ngOnInit(): void {
         
