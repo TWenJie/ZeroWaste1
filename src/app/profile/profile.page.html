@@ -1,0 +1,59 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openProfileActions()">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div *ngIf="user" class="profile-header">
+    <app-avatar
+      [image]="user.profile.avatar"
+      [height]="90"
+      [width]="90"
+    ></app-avatar>
+    <ion-text class="profile-name">
+      <h1>{{user.profile.fullname}}</h1>
+      <span>@{{user.profile.username}}</span>
+    </ion-text>
+    <!-- <ion-text class="profile-bio">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias sint, incidunt iste laudantium ducimus enim!</p>
+        </ion-text> -->
+  </div>
+
+  <ion-segment scrollable value="myfeeds" [(ngModel)]="profileSegment">
+    <ion-segment-button value="myfeeds">
+      <ion-label>Posts</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="complains">
+      <ion-label>Complains</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="about">
+      <ion-label>About</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="profileSegment">
+    <div *ngSwitchCase="'myfeeds'">
+      <app-content-list
+        *ngIf="paginationResponse?.results?.length > 0"
+        [items]="paginationResponse.results"
+        (contentActionsHandler)="contentActionsHandler($event)"
+        (onLoadMoreList)="fetchNext($event)"
+        (onRefreshList)="onRefreshList()"
+      ></app-content-list>
+    </div>
+    <div *ngSwitchCase="'complains'">
+        <app-profile-complains *ngIf="complainsResponse" [lists]="complainsResponse.results"></app-profile-complains>
+    </div>
+    <div *ngSwitchCase="'about'">
+      <app-profile-about [user]="user"></app-profile-about>
+    </div>
+  </div>
+</ion-content>

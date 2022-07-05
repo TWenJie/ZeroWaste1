@@ -11,10 +11,10 @@ import { CachingService } from './caching.service';
   providedIn: 'root'
 })
 export class FeedsService {
-  private _POST_URL = environment.serviceURI+'/posts';
-  private _IMGUPLOAD_URL = environment.serviceURI + '/media';
+  protected _POST_URL = environment.serviceURI+'/posts';
+  protected _IMGUPLOAD_URL = environment.serviceURI + '/media';
 
-  private _posts$ : BehaviorSubject<Post[]> = new BehaviorSubject<Post[]>([]);
+  protected _posts$ : BehaviorSubject<Post[]> = new BehaviorSubject<Post[]>([]);
   constructor(
     private http: HttpClient,
     private cachingService: CachingService,

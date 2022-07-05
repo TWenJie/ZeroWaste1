@@ -14,7 +14,7 @@ export class AppComponent {
     private platform: Platform,
   ) {
     this.cachingService.initStorage();
-    // this.initYoutubeApi();
+    this.initYoutubeApi();
     // this.initImageCacheDir();
   }
 

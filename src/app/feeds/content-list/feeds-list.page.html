@@ -1,5 +1,5 @@
 <ion-header [translucent]="true" collapse="fade">
-  <ion-toolbar >
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button>
         <app-avatar *ngIf="user" [image]="user.profile.avatar"></app-avatar>
@@ -14,11 +14,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content #feedContent (ionScroll)="listDidScroll($event)" [fullscreen]="true" [scrollEvents]="true">
+<ion-content
+  #feedContent
+  (ionScroll)="listDidScroll($event)"
+  [fullscreen]="true"
+  [scrollEvents]="true"
+>
   <!-- <ion-header collapse="condense">
       <ion-toolbar>
         <ion-title size="large">{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header> -->
-  <app-content-list (contentActionsHandler)="contentActionsHandler($event)" #feedsContentList (onLoadMoreList)="fetchNext($event)" (onRefreshList)="onRefreshList()" *ngIf="paginationResponse" [items]="paginationResponse.results"></app-content-list>
+  <app-content-list
+    (contentActionsHandler)="contentActionsHandler($event)"
+    #feedsContentList
+    (onLoadMoreList)="fetchNext($event)"
+    (onRefreshList)="onRefreshList()"
+    *ngIf="paginationResponse"
+    [items]="paginationResponse.results"
+  ></app-content-list>
 </ion-content>

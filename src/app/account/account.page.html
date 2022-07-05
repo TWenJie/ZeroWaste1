@@ -1,0 +1,79 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button color="danger" defaultHref="/tabs"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Account</ion-title>
+  
+      <ion-buttons slot="end">
+        <ion-button color="danger" (click)="onSaveChange()">
+          <ion-icon name="checkmark"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <div *ngIf="user">
+      <ion-card>
+        <ion-card-header>
+          <div class="centered">
+            <ion-avatar>
+              <img (click)="pickImage()" class="round" [src]=" selectedImage || fallbackURL" alt="user" />
+            </ion-avatar>
+            <input class="image-picker" type="file" accept="image/jpeg" name="image" *ngIf="isUsePicker" #imagePicker
+              (change)="chooseFile($event)"
+            >
+  
+            <h3>{{user?._profile?.fullname}}</h3>
+            <h6>@{{user?._profile?.username}}</h6>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item-group>
+              <ion-item lines="full">
+                <ion-label position="fixed">Username</ion-label>
+                <ion-text slot="end">{{user?._profile?.username}}</ion-text>
+              </ion-item>
+              <ion-item button lines="full" (click)="presentEditModal('name')">
+                <ion-label position="fixed">Name</ion-label>
+                <ion-text slot="end">{{user?._profile?.fullname}}</ion-text>
+                <!-- <ion-icon slot="end" name="create"></ion-icon> -->
+              </ion-item>
+              <ion-item button lines="full" >
+                <ion-label position="fixed">email</ion-label>
+                <ion-text slot="end">{{user?.email}}</ion-text>
+                <!-- <ion-icon slot="end" name="create"></ion-icon> -->
+              </ion-item>
+            </ion-item-group>
+  
+            <ion-item-divider></ion-item-divider>
+            <ion-item-group>
+              <ion-item button lines="full" (click)="presentEditModal('phone')">
+                <ion-label position="fixed">Phone</ion-label>
+                <ion-text slot="end">{{user?._profile.phone || 'none'}}</ion-text>
+                <!-- <ion-icon slot="end" name="create"></ion-icon> -->
+              </ion-item>
+              <ion-item button lines="full" (click)="presentEditModal('matric')">
+                <ion-label position="fixed">Matric ID</ion-label>
+                <ion-text slot="end">{{user?._profile.matricId || 'none'}}</ion-text>
+                <!-- <ion-icon slot="end" name="create"></ion-icon> -->
+              </ion-item>
+              <ion-item button lines="full" (click)="presentEditModal('bio')">
+                <ion-label position="fixed">Bio</ion-label>
+                <ion-text slot="end">{{user?._profile.bio || 'none'}}</ion-text>
+                <!-- <ion-icon slot="end" name="create"></ion-icon> -->
+              </ion-item>
+            </ion-item-group>
+          </ion-list>
+          <div class="centered">
+            <ion-button (click)="presentChangePasswordModal()" color="danger">
+              Change Password
+            </ion-button>
+          </div>
+          
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>

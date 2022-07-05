@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="tabs/account"
+        (click)="modalCtrl.dismiss()"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="updateValue()">
+        <span class="ion-text-lowercase">update</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-item [ngSwitch]="field.key">
+    <ion-label position="stacked">{{ field.key }}</ion-label>
+    <ion-input
+      *ngSwitchCase="'name'"
+      type="text"
+      [(ngModel)]="field.value"
+      placeholder="update your fullname"
+    ></ion-input>
+    <ion-input
+      *ngSwitchCase="'phone'"
+      type="phone"
+      [(ngModel)]="field.value"
+      placeholder="example: +60123456789"
+      minLength="5"
+      maxLength="100"
+      [pattern]="phoneRegex"
+    ></ion-input>
+    <ion-input
+      *ngSwitchCase="'matric'"
+      type="text"
+      [(ngModel)]="field.value"
+      placeholder="your matric ID number"
+      minLength="7"
+      maxLength="15"
+    ></ion-input>
+    <ion-input
+      *ngSwitchCase="'bio'"
+      type="text"
+      [(ngModel)]="field.value"
+      placeholder="Write something about your self"
+      maxLength="100"
+    ></ion-input>
+  </ion-item>
+</ion-content>

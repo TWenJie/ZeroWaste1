@@ -9,6 +9,7 @@ import {Storage} from '@capacitor/storage';
 import { User } from "../interfaces/user.class";
 import { SigninRequest, SignupRequest, VerifycodeRequest } from "../interfaces/auth-request.interface";
 import { SigninResponse, SignupResponse } from "../interfaces/auth-response.interface";
+import { UpdatePasswordDto } from "../account/change-password-modal/change-password.component";
 
 @Injectable({
     providedIn: 'root'
@@ -186,6 +187,13 @@ export class AuthService implements OnDestroy {
         )
     }
 
+    changePassword(credentials:UpdatePasswordDto): Observable<any>{
+      return this.http.patch(
+        this._AUTH_URI+'/password',
+        credentials,
+      )
+    }
+
     /**
      * 
      * Token management, refresh and set new accessToken
@@ -249,7 +257,7 @@ export class AuthService implements OnDestroy {
         this._user$.next(user);
     }
 
-
+    
 
     ngOnDestroy(): void {
         if(this._activeLogoutTimer){

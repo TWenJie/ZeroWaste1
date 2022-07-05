@@ -1,0 +1,52 @@
+<div class="ion-padding">
+    <ion-card>
+      <ion-card-header>
+        Feed Activity
+      </ion-card-header>
+      <ion-card-content>
+        <canvas #feedChartCanvas ></canvas>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header>
+        Smart Waste Activity
+      </ion-card-header>
+      <ion-card-content>
+        <canvas #smartbinChartCanvas ></canvas>
+      </ion-card-content>
+    </ion-card>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-content>
+              post liked: {{profileContent?.likesCount || 0}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-content>
+              commented: {{profileContent?.commentsCount || 0}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-content>
+              posts created: {{profileContent?.postsCount || 0}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-card>
+            <!-- <ion-card-content>
+              Enggagement score: 10 
+            </ion-card-content> -->
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>

@@ -20,8 +20,7 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./authentication/auth.module').then(m=> m.AuthPageModule),
-  }
-
+  },
   // {
   //   path: 'folder/:id',
   //   loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)

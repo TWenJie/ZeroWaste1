@@ -52,8 +52,8 @@ export class TabsPage implements OnInit, OnDestroy {
     ]
 
     public appPages = [
-        { title: 'Profile', url: '/profile', icon: 'person' },
-        { title: 'Account', url: '/account', icon: 'settings' },
+        { title: 'Profile', url: '/tabs/profile', icon: 'person' },
+        { title: 'Account', url: '/tabs/account', icon: 'settings' },
         { title: 'Themes', onClick: this.onToggleTheme.bind(this), icon: 'color-fill' },
         { title: 'Logout', onClick:  this.onLogout.bind(this) , icon: 'log-out' },
         // { title: 'Trash', url: '/folder/Trash', icon: 'trash' },

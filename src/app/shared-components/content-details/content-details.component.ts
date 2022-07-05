@@ -52,12 +52,12 @@ export class ContentDetailsComponent implements OnInit{
 
   initYoutubeApi(){
     this.videoContent = this.URLExtractor.parseTextForYoutube(this.item.textContent);
-    if(!this.youtubeApiLoaded){
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.body.appendChild(tag);
-      this.youtubeApiLoaded = true;
-    }
+    // if(!this.youtubeApiLoaded){
+    //   const tag = document.createElement('script');
+    //   tag.src = 'https://www.youtube.com/iframe_api';
+    //   document.body.appendChild(tag);
+    //   this.youtubeApiLoaded = true;
+    // }
   }
   play(){
     this.youtubePlayer.playVideo();

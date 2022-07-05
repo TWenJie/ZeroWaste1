@@ -24,6 +24,14 @@ const routes: Routes = [
                 loadChildren: () => import('../calendar/calendar.module').then(m=>m.CalendarPageModule)
             },
             {
+                path: 'profile',
+                loadChildren: () => import('../profile/profile.module').then(m=> m.ProgilePageModule),
+            },
+            {
+                path: 'account',
+                loadChildren: () => import('../account/account.module').then(m=>m.AccountPageModule)
+            },
+            {
                 path: '',
                 redirectTo: '/tabs/feeds',
                 pathMatch: 'full'
