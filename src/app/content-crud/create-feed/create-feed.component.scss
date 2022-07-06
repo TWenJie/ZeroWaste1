@@ -1,0 +1,36 @@
+.picker{
+    width: 7em;
+    height: 7em;
+    border-radius: 10%;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: var(--ion-color-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    margin: 2em;
+    .middle{
+        transition: .5s ease;
+        opacity: 1;
+    }
+}
+
+input[type="file"]{
+    display: none;
+}
+
+.preview-image{
+    margin: 10px;
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+
+#text-content{
+    padding: 5px 10px;
+}

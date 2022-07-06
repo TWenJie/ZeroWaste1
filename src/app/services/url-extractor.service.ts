@@ -11,8 +11,8 @@ export class URLExtractorService {
     private _IMGURLRegex=  /\.(jpeg|jpg|png)$/; //add $ add the end to accept only url end with these extension
     private _EXTIMGURLRegex=  /\.(jpeg|jpg|png)/; //add $ add the end to accept only url end with these extension
 
-    private _anchor_regex = /\[(?<text>\w+)\]\((?<url>https?:\/\/[^ ]*)\)/gm //in format: [text](https://url.com), text is group1, url is group 2.
-
+    // private _anchor_regex = /\[(?<text>\w+)\]\((?<url>https?:\/\/[^ ]*)\)/gm //in format: [text](https://url.com), text is group1, url is group 2.
+    private _anchor_regex = /\[(?<text>(\w+\s?){1,})\]\((?<url>https?:\/\/[^ ]*)\)/gm
     constructor(
         private sanitizer: DomSanitizer,
     ){}

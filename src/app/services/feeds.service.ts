@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { ImagesUploadResponse, Post, UpdateFeedValue } from '../interfaces/feeds.interface';
+import { ImagesUploadResponse, ImageUploadResponse, Post, UpdateFeedValue } from '../interfaces/feeds.interface';
 import { PaginationOptions, PaginationResponse } from '../interfaces/pagination.interface';
 import { CachingService } from './caching.service';
 
@@ -91,7 +91,7 @@ export class FeedsService {
     const formData = new FormData();
     formData.append('image',image);
     // const headers = this._headers;
-    return this.http.post<ImagesUploadResponse>(
+    return this.http.post<ImageUploadResponse>(
       this._IMGUPLOAD_URL+'/upload/images/posts',
       formData,
       // {headers}

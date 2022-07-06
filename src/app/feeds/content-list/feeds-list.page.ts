@@ -124,7 +124,6 @@ export class FeedsListPage implements OnInit, OnDestroy {
             this._currentPlayingVideoRef = null;
             this._currentPlayingVideoComp = null;
 
-            console.log('stopping video');
         }
 
         // console.log('Looping ....',this.feedsContentList);

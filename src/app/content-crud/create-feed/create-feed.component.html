@@ -1,17 +1,43 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title> New Post </ion-title>
+    <ion-title class="ion-text-center"> New Post </ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="modalCtrl.dismiss()">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="createPost()">Post</ion-button>
+      <ion-button class="ion-text-lowercase" (click)="createPost()">Post</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen="true">
+  <form [formGroup]="createForm">
+    <ion-item>
+      <ion-textarea id="text-content"
+        type="text"
+        rows="10"
+        maxLength="254"
+        formControlName="textContent"
+        placeholder="Write something ..."
+      ></ion-textarea>
+    </ion-item>
+    <div *ngIf="!selectedImage"  class="picker">
+      <ion-buttons color="primary" (click)="pickImage()" class="middle">
+        <ion-button>
+          <ion-icon name="images-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+    <ion-img
+      *ngIf="selectedImage" 
+      role="button" class="preview-image" (click)="pickImage()"
+      [src]="selectedImage"
+    ></ion-img>
 
+    <input type="file" accept="image/jpeg, image/png" name="image" *ngIf="usePicker" #imagePicker
+      (change)="chooseFile($event)"
+    >
+  </form>
 </ion-content>
