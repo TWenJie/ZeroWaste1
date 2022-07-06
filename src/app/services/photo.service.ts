@@ -61,13 +61,13 @@ export class PhotoService {
     return this.upload(formData, 'avatars');
   }
 
-  uploadFeedImage(image: File) {
+  uploadImage(image: File) {
     const formData = new FormData();
     formData.append('image', image);
     return this.upload(formData, 'posts');
   }
 
-  uploadManyFeedsImage(images: File[]) {
+  uploadManyImages(images: File[]) {
     const formData = new FormData();
     //limit image upload to 4
     for (let i = 0; i < 4; i++) {

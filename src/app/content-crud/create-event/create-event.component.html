@@ -7,7 +7,98 @@
     </ion-buttons>
     <ion-title class="ion-text-center"> New Event </ion-title>
     <ion-buttons slot="end">
-      <ion-button class="ion-text-lowercase">Create</ion-button>
+      <ion-button (click)="create()" [disabled]="!form.valid" class="ion-text-lowercase">Create</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
+<ion-content fullscreen>
+  <ion-card>
+    <ion-card-header>
+
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="form">
+        <ion-grid>
+          <ion-row>
+            <ion-col size-md="6" offset-md="3">
+              <ion-list>
+                <ion-item>
+                  <ion-label position="stacked">
+                    Event Name
+                  </ion-label>
+                  <ion-input
+                  type="text"
+                  formControlName="title"
+                  placeholder="what is the event called?"
+                  >
+                  </ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label position="stacked">
+                    Descriptions
+                  </ion-label>
+                  <ion-textarea
+                  formControlName="textContent"
+                  placeholder="Provide more information about the event"
+                  >
+                  </ion-textarea>
+                </ion-item>
+                <ion-item>
+                  <div *ngIf="!selectedImage"  class="picker">
+                    <ion-buttons color="primary" (click)="pickImage()" class="middle">
+                      <ion-button>
+                        <ion-icon name="images-outline"></ion-icon>
+                      </ion-button>
+                    </ion-buttons>
+                  </div>
+                  <ion-img
+                    *ngIf="selectedImage" 
+                    role="button" class="preview-image" (click)="pickImage()"
+                    [src]="selectedImage"
+                  ></ion-img>
+              
+                  <input type="file" accept="image/jpeg" name="image" *ngIf="usePicker" #imagePicker
+                    (change)="chooseFile($event)"
+                  >
+                </ion-item>
+                <ion-item lines="none">
+                  <h4>Start:</h4>
+                </ion-item>
+                <ion-item>
+                  <ion-datetime
+                  formControlName="startTime" 
+                  placeholder="Select Date" 
+                  [min]="minDate"
+                  [max]="maxDate"
+                  ></ion-datetime>
+                </ion-item>
+                <ion-item lines="none">
+                  <h4>End:</h4>                  
+                </ion-item>
+                <ion-item>
+                  <ion-datetime
+                  formControlName="endTime" 
+                  placeholder="Select Date" 
+                  [min]="minDate"
+                  [max]="maxDate"
+                  ></ion-datetime>
+                </ion-item>
+                
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <!-- <ion-img *ngIf="selectedImage"
+                role="button" class="preview-image" (click)="pickImage()"
+                [src]="selectedImage"
+              >
+              </ion-img> -->
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

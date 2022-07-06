@@ -65,7 +65,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     let imageURL:string;
     const image = this.createForm.get('image').value;
     if(image){
-       this._subscriptions['imageUpload'] = this.feedsService.uploadImage(image)
+       this._subscriptions['imageUpload'] = this.photoService.uploadImage(image)
        .pipe(switchMap((response)=>{
         if(response?.url){
             imageURL = `${this._API_URL}/${response.url}`;
@@ -98,13 +98,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  async closeModal() {
-    const modal = await this.modalCtrl.getTop();
-
-    if (modal) {
-      modal.dismiss();
-    }
-  }
+  
 
   async pickImage() {
     if (!Capacitor.isPluginAvailable('Camera') || this.usePicker) {
@@ -114,6 +108,18 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     const imageDataURL = await this.photoService.snapPicture();
     this.selectedImage = imageDataURL;
     this.onImagePicked(this.selectedImage);
+  }
+
+  chooseFile(event){
+    const pickedFile = (event.target as HTMLInputElement).files[0];
+    if(!pickedFile) return;
+    const fileReader = new FileReader();
+    fileReader.onload = () =>{
+      const dataUrl = fileReader.result.toString();
+      this.selectedImage = dataUrl;
+      this.onImagePicked(pickedFile);
+    }
+    fileReader.readAsDataURL(pickedFile);
   }
 
   onImagePicked(imageData: string | File) {
@@ -140,5 +146,13 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         duration: 5000
     });
     await toast.present();
+  }
+
+  async closeModal() {
+    const modal = await this.modalCtrl.getTop();
+
+    if (modal) {
+      modal.dismiss();
+    }
   }
 }

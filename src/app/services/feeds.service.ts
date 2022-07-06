@@ -14,10 +14,10 @@ export class FeedsService {
   protected _POST_URL = environment.serviceURI+'/posts';
   protected _IMGUPLOAD_URL = environment.serviceURI + '/media';
 
-  protected _posts$ : BehaviorSubject<Post[]> = new BehaviorSubject<Post[]>([]);
+  protected _posts$ : BehaviorSubject<Post[] | Event[]> = new BehaviorSubject<Post[]>([]);
   constructor(
-    private http: HttpClient,
-    private cachingService: CachingService,
+    protected http: HttpClient,
+    protected cachingService: CachingService,
   ) { }
 
 
@@ -87,29 +87,29 @@ export class FeedsService {
     )
   }
 
-  uploadImage(image:File){
-    const formData = new FormData();
-    formData.append('image',image);
-    // const headers = this._headers;
-    return this.http.post<ImageUploadResponse>(
-      this._IMGUPLOAD_URL+'/upload/images/posts',
-      formData,
-      // {headers}
-    )
-  }
+  // uploadImage(image:File){
+  //   const formData = new FormData();
+  //   formData.append('image',image);
+  //   // const headers = this._headers;
+  //   return this.http.post<ImageUploadResponse>(
+  //     this._IMGUPLOAD_URL+'/upload/images/posts',
+  //     formData,
+  //     // {headers}
+  //   )
+  // }
 
-  uploadImages(images:File[]){
-    const formData = new FormData();
-    // formData.append('image',image);
-    for(let i = 0; i < images.length; i++){
-      formData.append(images[i].name,images[i]);
-    }
+  // uploadImages(images:File[]){
+  //   const formData = new FormData();
+  //   // formData.append('image',image);
+  //   for(let i = 0; i < images.length; i++){
+  //     formData.append(images[i].name,images[i]);
+  //   }
 
-    return this.http.post<ImagesUploadResponse>(
-      this._IMGUPLOAD_URL+'/upload/images/posts',
-      formData,
-    )
-  }
+  //   return this.http.post<ImagesUploadResponse>(
+  //     this._IMGUPLOAD_URL+'/upload/images/posts',
+  //     formData,
+  //   )
+  // }
 
   create(post:Partial<Post>){
     let newPost: Post;
