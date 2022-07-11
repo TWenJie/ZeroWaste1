@@ -1,8 +1,9 @@
 <div class="feed-images">
   <ion-slides [options]="slidesOpts" [pager]="true">
-    <ion-slide (click)="previewImage(image)" *ngFor="let image of images">
+    <ion-slide (click)="previewImage(image)" *ngFor="let image of sanitzedImagesURLs">
       <img [src]="image" onerror="this.remove()" />
     </ion-slide>
   </ion-slides>
+  <!-- {{images | json}} -->
 
 </div>

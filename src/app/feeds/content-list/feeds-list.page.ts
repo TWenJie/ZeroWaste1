@@ -64,11 +64,11 @@ export class FeedsListPage implements OnInit, OnDestroy {
     }
 
     fetchPosts(event=null){
-        console.log('Pagination:',this.pagination);
+        // console.log('Pagination:',this.pagination);
         this._subscriptions['posts'] = this.feedsService.paginate(this.pagination).subscribe((response: PaginationResponse<Post>)=>{
             this.paginationResponse = response;
             console.log(this.paginationResponse);
-
+            console.log('Feeds:',response);
             if(event){
                 event.target.complete();
             }

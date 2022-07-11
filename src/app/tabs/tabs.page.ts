@@ -59,7 +59,7 @@ export class TabsPage implements OnInit, OnDestroy {
         // { title: 'Trash', url: '/folder/Trash', icon: 'trash' },
         // { title: 'Spam', url: '/folder/Spam', icon: 'warning' },
       ];
-    public labels = ['approved', 'reported', 'pending'];
+    // public labels = ['approved', 'reported', 'pending'];
 
     constructor(
         private actionSheetCtrl: ActionSheetController,

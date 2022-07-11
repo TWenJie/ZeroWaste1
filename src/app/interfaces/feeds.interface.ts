@@ -4,7 +4,7 @@ export interface Post {
     id:number;
     createdAt:Date,
     textContent: string;
-    resourceURL?:string [];
+    resources?: ImageUploadResponse[];
     approved:boolean;
     edited: boolean;
     likesCount: number;
@@ -73,13 +73,13 @@ export interface ErrorResponse {
  *Need to change this when we done create multi upload function. 
 */
 export interface ImageUploadResponse {
-    id: number;
-    url: string;
-    ogname: string;
-    filename: string;
-    owner: UserProfile;
+    alt: string;
+    // filename: string;
+    // path: string;
+    src: string;
 }
 
 export interface ImagesUploadResponse {
-    resourcesURL: string[];
+    savedResources: ImageUploadResponse[];
+    errors: any[];
 }

@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ModalController } from "@ionic/angular";
+import { ImageUploadResponse } from "src/app/interfaces/feeds.interface";
 import { ImagePreviewModalComponent } from "../image-preview-modal/image-preview-modal.component";
 
 @Component({
@@ -13,13 +15,23 @@ export class ImageSliderComponent implements OnInit {
         
     }
 
-    @Input() images : string[];
-    
+    @Input() images : ImageUploadResponse[];
+    sanitzedImagesURLs: SafeResourceUrl[] = [];
     constructor(
         private modalCtrl: ModalController,
+        private sanitizer: DomSanitizer,
     ){}
 
     ngOnInit(): void {
+        if(this.images.length > 0){
+            console.log('images',this.images);
+
+            this.images.forEach(image=>{
+                const sanitized = this.sanitizer.bypassSecurityTrustResourceUrl(image.src);
+                this.sanitzedImagesURLs.push(sanitized);
+                console.log('sanatized:',sanitized);
+            })
+        }
     }
 
     async previewImage(image:string){

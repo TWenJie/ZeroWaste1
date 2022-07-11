@@ -96,7 +96,6 @@ export class CreateEventComponent implements OnInit, OnDestroy {
                     return this.feedsService.create({
                         title: this.form.get('title').value,
                         textContent: this.form.get('textContent').value,
-                        eventType: this.form.get('eventType').value,
                         startTime: this.form.get('startTime').value,
                         endTime: this.form.get('endTime').value,
                         resources: response.savedResources

@@ -11,7 +11,7 @@ import { CachingService } from "./caching.service";
     providedIn: 'root',
 })
 export class FeedsEventService implements OnInit, OnDestroy{
-    protected _POST_URL = environment.serviceURI+'/posts';
+    protected _POST_URL = environment.serviceURI+'/posts/events';
 
     protected _posts$: BehaviorSubject<Event[]> = new BehaviorSubject([]);
 
