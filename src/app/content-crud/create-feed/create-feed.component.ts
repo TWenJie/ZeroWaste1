@@ -62,16 +62,15 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
   createPost() {
     if(!this.createForm.valid) return;
-    let imageURL:string;
+    // let resources:ImageUploadResponse[];
     const image = this.createForm.get('image').value;
     if(image){
        this._subscriptions['imageUpload'] = this.photoService.uploadImage(image)
        .pipe(switchMap((response)=>{
-        if(response?.url){
-            imageURL = `${this._API_URL}/${response.url}`;
+        if(response.savedResources.length > 0){
             return this.feedsService.create({
               textContent: this.createForm.get('textContent').value,
-              resourceURL: [imageURL],
+              resources : response.savedResources
             });
         }
        })).subscribe((response)=>{

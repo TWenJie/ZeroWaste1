@@ -4,6 +4,7 @@ import { Capacitor } from "@capacitor/core";
 import { ModalController, Platform, ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { switchMap } from "rxjs/operators";
+import { ImageUploadResponse } from "src/app/interfaces/feeds.interface";
 import { FeedsEventService } from "src/app/services/feeds-event.service";
 import { PhotoService } from "src/app/services/photo.service";
 import { environment } from "src/environments/environment";
@@ -21,6 +22,7 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     maxDate;
     usePicker: boolean = false;
     selectedImage: string;
+    selectedImages: string[] = [];
 
     private _subscriptions: Subscription[] = [];
     @ViewChild('imagePicker') filePicker: ElementRef<HTMLInputElement>;
@@ -84,20 +86,20 @@ export class CreateEventComponent implements OnInit, OnDestroy {
      */
     create(){
         if(!this.form.valid) return;
-        let imageURL:string;
+        // let resources:ImageUploadResponse[];
         const image = this.form.get('image').value;
         if(image){
-            this._subscriptions['imageUpload'] = this.photoService.uploadImage(image)
+            this._subscriptions['imageUpload'] = this.photoService.uploadImages(image)
             .pipe(switchMap((response)=>{
-                if(response.url){
-                    imageURL = `${this._API_URL}/${response.url}`;
+                if(response.savedResources.length > 0){
+                    console.log('img_URL:',response.savedResources);
                     return this.feedsService.create({
                         title: this.form.get('title').value,
                         textContent: this.form.get('textContent').value,
                         eventType: this.form.get('eventType').value,
                         startTime: this.form.get('startTime').value,
                         endTime: this.form.get('endTime').value,
-                        resourceURL: [imageURL],
+                        resources: response.savedResources
                     })
                 }
             })).subscribe({next:this.createSuccessHandler.bind(this),error:this.createFailedHandler.bind(this)})
@@ -125,28 +127,50 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     }
 
     async pickImage(){
+        this.selectedImages = [];
         if (!Capacitor.isPluginAvailable('Camera') || this.usePicker) {
             this.filePicker.nativeElement.click();
             return;
         }
         const imageDataURL = await this.photoService.snapPicture();
         this.selectedImage = imageDataURL;
-        this.onImagePicked(this.selectedImage);
+        const image = this.convertToBlob(this.selectedImage);
+        //then we take image, and patch forms.
+        this.form.patchValue({
+          image,
+        })
     }
 
     chooseFile(event){
-        const pickedFile = (event.target as HTMLInputElement).files[0];
-        if(!pickedFile) return;
-        const fileReader = new FileReader();
-        fileReader.onload = () =>{
-          const dataUrl = fileReader.result.toString();
-          this.selectedImage = dataUrl;
-          this.onImagePicked(pickedFile);
+        const pickedFiles = (event.target as HTMLInputElement).files;
+        // console.log('PickedFiles:',pickedFiles);
+        if(!pickedFiles) return;
+
+        /**
+         * Loop thru files we selected, and read using Filereader
+         */
+        const imagesBlobs = [];
+        for(let i = 0; i < pickedFiles.length; i++){
+          // console.log('each_file:',pickedFiles[i]);
+          if(!pickedFiles[i].type.match("image")) continue;
+          const fileReader = new FileReader();
+          fileReader.onload = (event) => {
+            const dataUrl = fileReader.result.toString();
+            this.selectedImages.push(dataUrl);
+            //then convert base64 image to blob
+            const imageBlob = this.convertToBlob(dataUrl);
+            imagesBlobs.push(imageBlob);
+          }
+          fileReader.readAsDataURL(pickedFiles[i]);
         }
-        fileReader.readAsDataURL(pickedFile);
+
+        this.form.patchValue({
+          image: imagesBlobs
+        })
+        // fileReader.readAsDataURL(pickedFile);
     }
     
-    onImagePicked(imageData: string | File) {
+    convertToBlob(imageData: string | File) {
         let image;
         if (typeof imageData === 'string') {
           try {
@@ -161,7 +185,8 @@ export class CreateEventComponent implements OnInit, OnDestroy {
         } else {
           image = imageData;
         }
-        this.form.patchValue({ image });
+        // this.form.patchValue({ image });
+        return image;
     }
     
     async presentToast(message:string){

@@ -87,30 +87,6 @@ export class FeedsService {
     )
   }
 
-  // uploadImage(image:File){
-  //   const formData = new FormData();
-  //   formData.append('image',image);
-  //   // const headers = this._headers;
-  //   return this.http.post<ImageUploadResponse>(
-  //     this._IMGUPLOAD_URL+'/upload/images/posts',
-  //     formData,
-  //     // {headers}
-  //   )
-  // }
-
-  // uploadImages(images:File[]){
-  //   const formData = new FormData();
-  //   // formData.append('image',image);
-  //   for(let i = 0; i < images.length; i++){
-  //     formData.append(images[i].name,images[i]);
-  //   }
-
-  //   return this.http.post<ImagesUploadResponse>(
-  //     this._IMGUPLOAD_URL+'/upload/images/posts',
-  //     formData,
-  //   )
-  // }
-
   create(post:Partial<Post>){
     let newPost: Post;
     return this.http.post(this._POST_URL,post,)

@@ -10,7 +10,7 @@ import { ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { ImageUploadResponse } from '../interfaces/feeds.interface';
+import { ImagesUploadResponse, ImageUploadResponse } from '../interfaces/feeds.interface';
 
 export interface CapturedPhoto {
   filepath: string;
@@ -60,17 +60,10 @@ export class PhotoService {
 
   private uploads(formData:FormData,foldername:string){
     console.log('FormData_before_upload::',formData);
-    return this.http.post<any>(
-      this._MEDIA_URI + '/upload/images/' + foldername,
+    return this.http.post<ImagesUploadResponse>(
+      this._MEDIA_URI + foldername,
       formData
-    ).pipe(
-      map((response)=>{
-        console.log('upload_many_response:',response);
-        if(response.length > 0){
-          return response.map(item=> `${this._API_URL}/${item.url}`);
-        };
-      })
-    );
+    )
   }
 
   uploadAvatar(image: File) {
@@ -81,11 +74,11 @@ export class PhotoService {
 
   uploadImage(image: File) {
     const formData = new FormData();
-    formData.append('image', image);
-    return this.upload(formData, 'posts');
+    formData.append('images[]', image);
+    return this.uploads(formData, '/feeds/images/');
   }
 
-  uploadImages(images: File[]) : Observable<string[]> {
+  uploadImages(images: File[]) : Observable<ImagesUploadResponse> {
     const formData = new FormData();
     //limit image upload to 4
     for (let i = 0; i < 4; i++) {
@@ -94,7 +87,7 @@ export class PhotoService {
     console.log("images:",images);
     // formData.append("image",images);
 
-    return this.uploads(formData, 'posts');
+    return this.uploads(formData, '/feeds/images/');
   }
 
   async presentToast(message: string) {
