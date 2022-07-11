@@ -7,6 +7,8 @@ import {
   Photo,
 } from '@capacitor/camera';
 import { ToastController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ImageUploadResponse } from '../interfaces/feeds.interface';
 
@@ -20,6 +22,7 @@ export interface CapturedPhoto {
 })
 export class PhotoService {
   private _MEDIA_URI = `${environment.serviceURI}/media`;
+  private _API_URL = environment.serviceURI;
 
   constructor(private http: HttpClient, private toastCtrl: ToastController) {}
 
@@ -50,15 +53,30 @@ export class PhotoService {
   private upload(formData: FormData, foldername: string) {
     // const headers = this._headers;
     return this.http.post<ImageUploadResponse>(
+      this._MEDIA_URI + foldername,
+      formData
+    );
+  }
+
+  private uploads(formData:FormData,foldername:string){
+    console.log('FormData_before_upload::',formData);
+    return this.http.post<any>(
       this._MEDIA_URI + '/upload/images/' + foldername,
       formData
+    ).pipe(
+      map((response)=>{
+        console.log('upload_many_response:',response);
+        if(response.length > 0){
+          return response.map(item=> `${this._API_URL}/${item.url}`);
+        };
+      })
     );
   }
 
   uploadAvatar(image: File) {
     const formData = new FormData();
     formData.append('avatar', image);
-    return this.upload(formData, 'avatars');
+    return this.upload(formData, '/avatar/images');
   }
 
   uploadImage(image: File) {
@@ -67,14 +85,16 @@ export class PhotoService {
     return this.upload(formData, 'posts');
   }
 
-  uploadManyImages(images: File[]) {
+  uploadImages(images: File[]) : Observable<string[]> {
     const formData = new FormData();
     //limit image upload to 4
     for (let i = 0; i < 4; i++) {
-      formData.append(`image${i}`, images[i]);
+      formData.append(`images[]`, images[i]);
     }
+    console.log("images:",images);
+    // formData.append("image",images);
 
-    return this.upload(formData, 'posts');
+    return this.uploads(formData, 'posts');
   }
 
   async presentToast(message: string) {

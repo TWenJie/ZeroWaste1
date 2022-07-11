@@ -11,6 +11,7 @@ import { Capacitor } from '@capacitor/core';
 import { ModalController, Platform, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ImageUploadResponse } from '../interfaces/feeds.interface';
 import { User } from '../interfaces/user.class';
 import { AuthService } from '../services/auth.service';
 import { PhotoService } from '../services/photo.service';
@@ -84,10 +85,10 @@ export class AccountPage implements OnInit, OnDestroy {
     // const {fullname,phone,matricId,bio} = this.user._profile;
     const image = this.imageForm.get('image').value;
     if(image){
-      const {url} = await this.photoService.uploadAvatar(image).toPromise();
-      if(url){
-        const avatar = `${environment.serviceURI}/${url}`;
-        this.user._profile.avatar = avatar;
+      const response = await this.photoService.uploadAvatar(image).toPromise() as ImageUploadResponse;
+      if(response){
+        // console.log('image uploaded:',response);
+        this.user._profile.avatar = response.src;
       }
     }
 
