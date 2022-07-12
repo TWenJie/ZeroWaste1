@@ -1,72 +1,81 @@
 <ion-header>
-    <ion-toolbar>
-      <ion-buttons class="ion-text-center">
-        <!-- <ion-button (click)="goBack()">
+  <ion-toolbar>
+    <ion-buttons class="ion-text-center">
+      <!-- <ion-button (click)="goBack()">
           <ion-icon name="close"></ion-icon>
         </ion-button> -->
-        <ion-back-button color="danger" defaultHref="/tabs"></ion-back-button>
-        <ion-title>Comments</ion-title>
-        <ion-button slot="end" >
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
+      <ion-back-button color="danger" defaultHref="/tabs"></ion-back-button>
+      <ion-title>Comments</ion-title>
+      <ion-button slot="end"> </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <app-content-details (onClickContentActions)="contentActionsHandler($event)" [item]="item" ></app-content-details>
-    <app-comments-list *ngIf="paginationResponse" [comments]="paginationResponse.results"></app-comments-list>
-
-    <!-- create comment button  -->
-    <ion-toolbar id="open-modal" class="reply-container">
-      <ion-title>
-        <div class="reply">
-          Comment to this...
-        </div>
-      </ion-title>
-      <ion-buttons slot="end">
-        <ion-button>
-          <ion-icon name="arrow-redo"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-
-    <!-- create comment modal  -->
-    <ion-modal 
-      #commentModal
-      trigger="open-modal"
-      [breakpoints]="[0, 0.2 , 0.25, 0.5, 0.75]"
-      [initialBreakpoint]="0.2"
+  <ion-refresher slot="fixed" pullMin="200" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content
+      refreshingSpinner="circles"
+      refreshingText="Refreshing..."
     >
-      <ng-template>
-        <ion-header>
-          <ion-toolbar>
-            <ion-buttons>
-              <ion-button (click)="commentModal.dismiss()"  slot="start">
-                <ion-icon name="close"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-            <ion-buttons slot="end">
-              <ion-button (click)="createComment()"  slot="start">
-                <ion-icon name="send"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content>
-          <ion-textarea 
-            (click)="commentModal.setCurrentBreakpoint(0.5)"
-            [autoGrow]="true"
-            autoFocus="true"
-            enterkeyhint="send"
-            inputmode="text"
-            placeholder="comment texts ..."
-            maxlength="250"
-            minlength="2"
-            >
+    </ion-refresher-content>
+  </ion-refresher>
+  <app-content-details
+    (onClickContentActions)="contentActionsHandler($event)"
+    [item]="item"
+  ></app-content-details>
+  <app-comments-list
+    *ngIf="paginationResponse"
+    [comments]="paginationResponse.results"
+  ></app-comments-list>
 
-          </ion-textarea>
-        </ion-content>
-      </ng-template>
-    </ion-modal>
+  <!-- create comment button  -->
+  <ion-toolbar id="open-modal" class="reply-container">
+    <ion-title>
+      <div class="reply">Comment to this...</div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="arrow-redo"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 
+  <!-- create comment modal  -->
+  <ion-modal
+    #commentModal
+    trigger="open-modal"
+    [breakpoints]="[0, 0.2 , 0.25, 0.5, 0.75]"
+    [initialBreakpoint]="0.2"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons>
+            <ion-button (click)="commentModal.dismiss()" slot="start">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons slot="end">
+            <ion-button (click)="createComment()" slot="start">
+              <ion-icon name="send"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-textarea
+          [(ngModel)]="commentText"
+          (click)="commentModal.setCurrentBreakpoint(0.5)"
+          [autoGrow]="true"
+          autoFocus="true"
+          enterkeyhint="send"
+          inputmode="text"
+          placeholder="comment texts ..."
+          maxlength="250"
+          minlength="2"
+        >
+        </ion-textarea>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

@@ -10,9 +10,9 @@ import { FeedsService } from "./feeds.service";
     providedIn: 'root',
 })
 export class ContentActionsService implements OnDestroy{
-    private _user: User;
+    protected _user: User;
 
-    private _subscriptions: Subscription [] = [];
+    protected _subscriptions: Subscription [] = [];
     constructor(
         private authService: AuthService,
         private actionsCtrl: ActionSheetController,

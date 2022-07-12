@@ -31,7 +31,10 @@
         </div>
       </ion-col>
       <ion-col size="12">
-        <app-engagement-buttons (commentClickHandler)="openDetailPage(item)"></app-engagement-buttons>
+        <app-engagement-buttons [commentsCount]="item.commentsCount" 
+          [likesCount]="item.likesCount"
+          (commentClickHandler)="openDetailPage(item)"
+        ></app-engagement-buttons>
       </ion-col>
     </ion-row>
   </ion-card-content>

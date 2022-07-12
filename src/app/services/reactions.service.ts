@@ -10,7 +10,7 @@ import { PaginationOptions, PaginationResponse } from '../interfaces/pagination.
   providedIn: 'root'
 })
 export class ReactionsService {
-  private _REACTION_URL = environment.serviceURI+ '/reactions';
+  private _REACTION_URL = environment.serviceURI;
 
   private _comments$: BehaviorSubject<Comment[]> = new BehaviorSubject<Comment[]>([]);
   private _likes$: BehaviorSubject<Like[]> = new BehaviorSubject<Like[]>([]);

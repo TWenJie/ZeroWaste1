@@ -16,7 +16,8 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { SharedDirectivesModule } from './directives/shared-directives.module';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,
+  ],
   imports: [
     SharedDirectivesModule,
     BrowserModule, 

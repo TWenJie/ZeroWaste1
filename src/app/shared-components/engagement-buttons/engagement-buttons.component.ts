@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 
 @Component({
     selector: 'app-engagement-buttons',
@@ -6,7 +6,8 @@ import { Component, EventEmitter, OnInit, Output } from "@angular/core";
     styleUrls: ['engagement-buttons.component.scss'],
 })
 export class EngagementButtonsComponent implements OnInit{
-    
+    @Input() commentsCount: number = 0;
+    @Input() likesCount: number = 0;
     @Output() commentClickHandler : EventEmitter<any> = new EventEmitter();
     constructor(){}
 
