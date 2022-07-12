@@ -21,7 +21,7 @@ export class ReactionsService {
 
   like(postID:number){
     return this.http.post(
-      `${this._REACTION_URL}/posts/${postID}/likes`,
+      `${this._REACTION_URL}/posts/${postID}/like`,
       {},
     );
   }
@@ -29,7 +29,7 @@ export class ReactionsService {
   //status Code 202 Accepted
   unlike(postID:number){
     return this.http.delete(
-      `${this._REACTION_URL}/posts/${postID}/likes`,
+      `${this._REACTION_URL}/posts/${postID}/like`,
     );
   }
 

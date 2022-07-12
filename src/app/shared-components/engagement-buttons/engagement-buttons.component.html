@@ -1,6 +1,6 @@
 <ul class="engagement-icons">
-    <li class="engagement-icon">
-        <ion-icon name="heart-outline"></ion-icon>
+    <li  class="engagement-icon">
+        <ion-icon [color]=" (liked !== null) ?  'danger': 'medium'  " (click)="likeClickHandler.emit()" name="heart-outline"></ion-icon>
         <span> {{likesCount | numberFormat}} Likes</span>
     </li>
     <li (click)="commentClickHandler.emit()" class="engagement-icon">

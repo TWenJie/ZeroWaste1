@@ -31,9 +31,12 @@
         </div>
       </ion-col>
       <ion-col size="12">
-        <app-engagement-buttons [commentsCount]="item.commentsCount" 
+        <app-engagement-buttons
+          [liked]="item.liked" 
+          [commentsCount]="item.commentsCount" 
           [likesCount]="item.likesCount"
           (commentClickHandler)="openDetailPage(item)"
+          (likeClickHandler)="likePost()"
         ></app-engagement-buttons>
       </ion-col>
     </ion-row>

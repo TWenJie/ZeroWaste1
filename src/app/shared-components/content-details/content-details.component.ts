@@ -1,5 +1,7 @@
 import {  Component, ContentChild, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { YouTubePlayer } from '@angular/youtube-player';
+import { ToastController } from '@ionic/angular';
+import { ReactionsService } from 'src/app/services/reactions.service';
 import { ParsedTexts, ParsedYoutubeContent, URLExtractorService} from 'src/app/services/url-extractor.service';
 
 @Component({
@@ -11,6 +13,7 @@ export class ContentDetailsComponent implements OnInit{
   @Input() item: any;
   @Output() onClickContent: EventEmitter<any> = new EventEmitter();
   @Output() onClickContentActions: EventEmitter<any> = new EventEmitter();
+  @Output() onClickLike: EventEmitter<any> = new EventEmitter();
 
   private youtubeApiLoaded: boolean = false;
 
@@ -27,6 +30,8 @@ export class ContentDetailsComponent implements OnInit{
 
   constructor(
     private URLExtractor: URLExtractorService,
+    private readonly reactionsService: ReactionsService,
+    private readonly toastCtrl: ToastController,
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +48,31 @@ export class ContentDetailsComponent implements OnInit{
 
   openContentActions(){
     this.onClickContentActions.emit(this.item);
+  }
+
+
+  likePost(){
+    // console.log('Liking:',this.item);
+    const liked = this.item.liked;
+    if(!liked) {
+      this.item.liked = true;
+      this.item.likesCount++;
+      this.reactionsService.like(this.item.id).toPromise().catch(error=>{
+        const message =  error?.error?.message ?? 'Failed to like,something went wrong!';
+      });
+    }else{
+      this.item.liked = null;
+      this.item.likesCount--;
+      this.reactionsService.unlike(this.item.id).toPromise();
+    }
+  }
+
+  async presentToast(message:string){
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 5000
+    });
+    await toast.present();
   }
 
 
