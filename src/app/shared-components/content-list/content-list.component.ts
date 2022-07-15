@@ -27,7 +27,7 @@ export class ContentListComponent implements OnInit{
     ){}
 
     ngOnInit(): void {
-        console.log('Content_list:',this.items)
+        // console.log('Content_list:',this.items)
     }
 
     openDetailPage(item:Post){

@@ -24,12 +24,12 @@ export class ImageSliderComponent implements OnInit {
 
     ngOnInit(): void {
         if(this.images.length > 0){
-            console.log('images',this.images);
+            // console.log('images',this.images);
 
             this.images.forEach(image=>{
                 const sanitized = this.sanitizer.bypassSecurityTrustResourceUrl(image.src);
                 this.sanitzedImagesURLs.push(sanitized);
-                console.log('sanatized:',sanitized);
+                // console.log('sanatized:',sanitized);
             })
         }
     }
