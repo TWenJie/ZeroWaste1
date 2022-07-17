@@ -5,6 +5,8 @@ import { CreateFeedComponent } from "../content-crud/create-feed/create-feed.com
 import { AuthService } from "src/app/services/auth.service";
 import { User } from "../interfaces/user.class";
 import { Subscription } from "rxjs";
+import { Role } from "../interfaces/user.interface";
+import { CreateEZWCComponent } from "../content-crud/create-ezwc/create-ezwc.component";
 
 @Component({
     selector: 'app-tabs',
@@ -107,39 +109,52 @@ export class TabsPage implements OnInit, OnDestroy {
     }
 
     async presentActionSheet(){
+
+        const buttons = [
+            {
+                text: 'Feeds',
+                icon: 'shapes',
+                cssClass: 'feeds-action-button',
+                handler: () => {
+                  console.log('Feeds Create')
+                  this.presentModal(CreateFeedComponent);
+                }
+              },
+              {
+                text: 'Events',
+                icon: 'calendar-number',
+                cssClass: 'events-action-button',
+                handler:()=>{
+                    console.log('events Create')
+                    this.presentModal(CreateEventComponent);
+
+                }
+              }
+              ,
+              {
+                text: 'cancel',
+                icon: 'close',
+                role: 'cancel',
+                handler:()=>{
+
+                }
+              }
+        ]
+
+        if(this.user.role == Role.Moderator || this.user.role == Role.WebAdmin){
+            buttons.push({
+                text: 'Educational feeds',
+                icon: 'book',
+                cssClass: 'ezwc-action-button',
+                handler:()=>{
+                    this.presentModal(CreateEZWCComponent);
+                }
+            })
+        }
         const actionSheet = await this.actionSheetCtrl.create({
             header: 'Create',
             cssClass: 'creation-actionsheet',
-            buttons: [
-                {
-                    text: 'Feeds',
-                    icon: 'shapes',
-                    cssClass: 'feeds-action-button',
-                    handler: () => {
-                      console.log('Feeds Create')
-                      this.presentModal(CreateFeedComponent);
-                    }
-                  },
-                  {
-                    text: 'Events',
-                    icon: 'calendar-number',
-                    cssClass: 'events-action-button',
-                    handler:()=>{
-                        console.log('events Create')
-                        this.presentModal(CreateEventComponent);
-
-                    }
-                  }
-                  ,
-                  {
-                    text: 'cancel',
-                    icon: 'close',
-                    role: 'cancel',
-                    handler:()=>{
-
-                    }
-                  }
-            ]
+            buttons
         });
 
         await actionSheet.present();
