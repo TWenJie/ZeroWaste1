@@ -25,6 +25,18 @@ export interface CreateFeed {
     textContent:string;
 }
 
+export interface EZWCFeed{
+    id:number;
+    createdAt:Date;
+    textContent:string;
+    resources?: ImageUploadResponse[];
+    likesCount: number;
+    commentsCount: number;
+    author: UserProfile;
+    liked?: any;
+    dataStudioURL:string;
+}
+
 export interface CreatePost extends CreateFeed {
     resourceURL? :string [];
 }
