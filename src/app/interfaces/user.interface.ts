@@ -19,3 +19,9 @@ export interface UserProfile {
     phone?: string;
     avatar: string;
 }
+
+export enum Role{
+    User = 'User',
+    WebAdmin = 'WebAdmin',
+    Moderator = 'Moderator',
+}
