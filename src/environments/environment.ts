@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false, //set to true when release
-  // serviceURI: 'https://zerowaste.cs.usm.my/spebaapi',
+  serviceURI: 'https://zerowaste.cs.usm.my/speba/apiv2',
   // serviceURI: 'http://localhost/speba_api',
-  serviceURI : "http://localhost:3000"
+  // serviceURI : "http://localhost:3000"
 
 };
 
