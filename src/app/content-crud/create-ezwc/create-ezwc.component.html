@@ -15,14 +15,17 @@
 <ion-content>
     <form [formGroup]="form">
         <ion-item>
-            <ion-textarea id="text-content"
+            <!-- <ion-textarea id="text-content"
                 type="text"
                 row="10"
                 autoGrow="true"
                 maxLength="2500"
                 formControlName="textContent"
                 placeholder="Write something ..."
-            ></ion-textarea>
+            ></ion-textarea> -->
+            <quill-editor
+              formControlName="textContent"
+            ></quill-editor>
         </ion-item>
         <ion-item>
             <ion-label position="stacked">

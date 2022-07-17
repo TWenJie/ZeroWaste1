@@ -14,6 +14,20 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
 import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { SharedDirectivesModule } from './directives/shared-directives.module';
+import { QuillModule, QuillModules } from 'ngx-quill';
+
+
+const quilsModules: QuillModules = {
+  toolbar: [
+      ['bold','italic','underline','strike'],
+      ['blockquote'],
+      [{list:'ordered'},{list:'bullet'}],
+      [{header: [1,2,3,4,5,6,false]}],
+      [{align:[]}],
+      ['link'],
+  ]
+}
+
 
 @NgModule({
   declarations: [AppComponent,
@@ -26,7 +40,10 @@ import { SharedDirectivesModule } from './directives/shared-directives.module';
     HttpClientModule,
     IonicStorageModule.forRoot({
       driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB]
-    })
+    }),
+    QuillModule.forRoot({
+      modules: quilsModules,
+    }),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
