@@ -4,11 +4,12 @@ import {
   Camera,
   CameraResultType,
   CameraSource,
+  GalleryPhotos,
   Photo,
 } from '@capacitor/camera';
 import { ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ImagesUploadResponse, ImageUploadResponse } from '../interfaces/feeds.interface';
 
@@ -42,6 +43,21 @@ export class PhotoService {
         this.presentToast(message);
         return null;
       });
+  }
+
+  public async pickImages() : Promise<string[]>{
+    const gelleryPhotos = await Camera.pickImages({
+      correctOrientation: true,
+      quality: 80,
+      limit: 4,
+      width: 800,
+      height: 418,
+    }) as GalleryPhotos;
+
+    const limit = 4;
+    return gelleryPhotos.photos.slice(0,limit).map(photo=>{
+      return photo.webPath;
+    })
   }
 
   /**
@@ -84,7 +100,6 @@ export class PhotoService {
     for (let i = 0; i < 4; i++) {
       formData.append(`images[]`, images[i]);
     }
-    console.log("images:",images);
     // formData.append("image",images);
 
     return this.uploads(formData, '/feeds/images/');
@@ -128,5 +143,15 @@ export class PhotoService {
       };
       reader.readAsDataURL(blob);
     });
+  }
+
+  //webpath is blob:http://address.something
+  webPathToBlob(path:string){
+    //fetch, then convert the response into base64 or blob;
+    return this.http.get(path,{
+      responseType: 'blob'
+    }).pipe(tap((response:Blob)=>{
+      console.log('responseWebPath:',response);
+    }))
   }
 }
