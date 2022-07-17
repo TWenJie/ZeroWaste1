@@ -1,4 +1,5 @@
 import {  Component, ContentChild, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { ToastController } from '@ionic/angular';
 import { ReactionsService } from 'src/app/services/reactions.service';
@@ -17,10 +18,10 @@ export class ContentDetailsComponent implements OnInit{
 
   private youtubeApiLoaded: boolean = false;
 
+  safeDataStudioURL:SafeResourceUrl;
   parsedTexts: ParsedTexts;
   isCreateCommentModalOpen = false;
-  videoContent: ParsedYoutubeContent;
-
+  videoId: string = null;
 
 
   @ViewChild(YouTubePlayer) youtubePlayer!: YouTubePlayer;
@@ -32,13 +33,19 @@ export class ContentDetailsComponent implements OnInit{
     private URLExtractor: URLExtractorService,
     private readonly reactionsService: ReactionsService,
     private readonly toastCtrl: ToastController,
+    private readonly sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
     this.initYoutubeApi();
-  }
+    // console.log('this.item.dataStudioURL:',this.item)
 
-  
+    if(this.item.dataStudioURL && this.URLExtractor.isDataStudioUrl(this.item.dataStudioURL)){
+      // console.log('this.item.dataStudioURL:',this.item.dataStudioURL)
+      this.safeDataStudioURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.item.dataStudioURL);
+      // console.log('this.item.dataStudioURL:',this.item.dataStudioURL)
+    }
+  }
 
   openDetailPage(){
     if(this.onClickContent){
@@ -80,8 +87,13 @@ export class ContentDetailsComponent implements OnInit{
    * For YouTube PLayer
    */
 
-  initYoutubeApi(){
-    this.videoContent = this.URLExtractor.parseTextForYoutube(this.item.textContent);
+  async initYoutubeApi(){
+
+    const videoContent: ParsedYoutubeContent = await this.URLExtractor.parseTextForYoutube(this.item.textContent);
+    // console.log('Video_content:',videoContent);
+    if(videoContent){
+      this.videoId = videoContent.videoId;
+    }
     // if(!this.youtubeApiLoaded){
     //   const tag = document.createElement('script');
     //   tag.src = 'https://www.youtube.com/iframe_api';

@@ -6,6 +6,14 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 })
 export class URLExtractorService {
     private _webPreviewServiceUrl = `https://api.linkpreview.net/?`;
+
+
+    /**
+     * Delcaring regex as global can cause match to return null bugs,
+     * reasong because we not reset the regex internal pointer
+     * refer: https://stackoverflow.com/questions/4724701/regexp-exec-returns-null-sporadically
+     */
+
     private _videoIDRegex =  /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     private _URLRegex = /(https?:\/\/[^ ]*)/g;
     private _IMGURLRegex=  /\.(jpeg|jpg|png)$/; //add $ add the end to accept only url end with these extension
@@ -13,6 +21,8 @@ export class URLExtractorService {
 
     // private _anchor_regex = /\[(?<text>\w+)\]\((?<url>https?:\/\/[^ ]*)\)/gm //in format: [text](https://url.com), text is group1, url is group 2.
     private _anchor_regex = /\[(?<text>(\w+\s?){1,})\]\((?<url>https?:\/\/[^ ]*)\)/gm
+    
+    private _data_studio_url_regex = /(https?:\/\/datastudio.google.com\/[^ ]*)/;
     constructor(
         private sanitizer: DomSanitizer,
     ){}
@@ -48,10 +58,13 @@ export class URLExtractorService {
     // }
 
     parseTextforAnchor(texts:string) : ParsedTexts{
+
+        const _anchor_regex = /\[(?<text>(\w+\s?){1,})\]\((?<url>https?:\/\/[^ ]*)\)/gm
+
         let preParsedText = texts;
         let match : RegExpExecArray  = null;
         let resources : Resource [] = [];
-        while((match = this._anchor_regex.exec(preParsedText) as RegExpExecArray)){
+        while((match = _anchor_regex.exec(preParsedText) as RegExpExecArray)){
             let resource = {
                 anchor: match[0],
                 text: match.groups.text,
@@ -66,29 +79,42 @@ export class URLExtractorService {
         }
     }
 
-    parseTextForYoutube(texts) : ParsedYoutubeContent {
-        const matches = this._URLRegex.exec(texts);
+    async parseTextForYoutube(texts) : Promise<ParsedYoutubeContent> {
+        const _videoIDRegex =  /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const _URLRegex = /(https?:\/\/[^ ]*)/g;
+
+        const matches = _URLRegex.exec(texts);
         let url = matches?.[0];
-        // console.log('matches',matches);
-        //check if parsed url is youtube or external url.
         if(!url){
             return;
         }
-        if(url.match(this._videoIDRegex)?.length > 0){
-            let videoId = this.extractVideoID(url);
+        if(url.match(_videoIDRegex)?.length > 0){
+            //remove html tags from url;
+            // console.log('video_id_found:',url.match(_videoIDRegex))
+            const parsedUrl = url.replace(/<[^>]*>?/gm, '');
+            let videoId = this.extractVideoID(parsedUrl);
             return {
                 videoId,
-                url
+                url: parsedUrl,
             };
         }
     }
 
     extractVideoID(url:string){
+        const _videoIDRegex =  /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         if(!url) return;
-        const match = url.match(this._videoIDRegex);
+        const match = url.match(_videoIDRegex);
         return (match && match[2].length === 11) ? match[2] : null;
     }
+
+
+    isDataStudioUrl(URL:string) : boolean{
+        const _data_studio_url_regex = /(https?:\/\/datastudio.google.com\/[^ ]*)/;
+
+        return _data_studio_url_regex.test(URL);
+    }
 }
+
 
 
 
