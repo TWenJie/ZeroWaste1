@@ -35,14 +35,14 @@ export class ContentActionsService implements OnDestroy{
                     this.deleteActionsHandler(item);
                 }
             },
-            {
-                text: 'Edit',
-                icon: 'create',
-                handler: () => {
-                    //do something.
+            // {
+            //     text: 'Edit',
+            //     icon: 'create',
+            //     handler: () => {
+            //         //do something.
                     
-                }
-            },
+            //     }
+            // },
         ];
 
         const moderatorButtons = [
