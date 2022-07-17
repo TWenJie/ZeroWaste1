@@ -4,11 +4,21 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content [fullscreen]="true">
+  <ion-content 
+  [fullscreen]="true" 
+  [fullscreen]="true"
+  [scrollEvents]="true">
+  
     <ion-header  collapse="condense">
       <ion-toolbar >
           <ion-title class="ion-text-left">E-ZWC</ion-title>
       </ion-toolbar>
     </ion-header>
-    <app-content-list [items]="items"></app-content-list>
+    <app-content-list 
+      (onRefreshList)="onRefreshList()"
+      (onLoadMoreList)="fetchNext($event)"
+      *ngIf="paginationResponse"
+      [items]="paginationResponse.results"
+    >
+    </app-content-list>
   </ion-content>
