@@ -1,0 +1,42 @@
+<ion-content>
+    <div class="center">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <h3>Welcome,</h3>
+          </ion-card-title>
+          <ion-card-subtitle>
+            <p>Please check your email for verification code</p>
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <form #oobForm="ngForm" (ngSubmit)="verifyOOB(oobForm)">
+            <ion-item lines="none">
+              <ion-input
+              type="text"
+              ngModel
+              name="code"
+              required
+              minlength="4"
+              #code="ngModel"
+              placeholder="verification code"
+              >
+    
+              </ion-input>
+            </ion-item>
+            <ion-button 
+            type="submit"
+            expand="block"
+            [disabled]="!oobForm.valid"
+            >
+              verify
+            </ion-button>
+            <ion-buttons class="ion-justify-content-center">
+              <p color="primary" (click)="sendOOB()">resend code</p>
+            </ion-buttons>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>
+  

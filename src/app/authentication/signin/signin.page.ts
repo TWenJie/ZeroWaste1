@@ -61,7 +61,7 @@ export class SigninPage implements OnInit, OnDestroy{
             if(response.isEmailVerified){
                 return this.router.navigateByUrl('/tabs',{replaceUrl:true});
             }
-            return this.router.navigateByUrl('/profile-verify');
+            return this.router.navigateByUrl('/auth/verify');
         },(error)=>{
             if(this.loadingCtrl.getTop()){
                 this.loadingCtrl.dismiss();
