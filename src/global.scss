@@ -29,6 +29,12 @@
 /*CSS package for ngx-quill text editor*/
 @import '~quill/dist/quill.snow.css';
 
+// CSS for leaflet
+@import "~leaflet/dist/leaflet.css";
+.leaflet-default-icon-path {
+    background-image: url(https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png);
+}
+
 /*Custom Modal SCSS*/
 .transparent-modal{
     --background: rgba(0, 0, 0, 0.296);
