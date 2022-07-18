@@ -7,7 +7,54 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button>create</ion-button>
+      <ion-button
+        (click)="createComplain()"
+        [disabled]="!form.valid"
+      >create</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
+<ion-content fullscreen>
+  <form [formGroup]="form">
+    <ion-list>
+      <ion-item>
+        <ion-textarea
+        formControlName="content" 
+        placeholder="Write something (optional) ...."
+        ></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Complain Type
+        </ion-label>
+        <ion-select 
+        formControlName="complainTypes"
+        placeholder="select type">
+          <ion-select-option *ngFor="let type of complainTypes" [value]="type">{{type}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          Smart Bins
+        </ion-label>
+        <ion-card>
+          <ion-card-header>
+            <ion-img [src]="smartbin.properties.imageUrl"></ion-img>
+            <h3>
+            {{smartbin.properties.name}}
+            </h3>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{smartbin.properties.descriptions}}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+      <!-- <ion-buttons>
+        <ion-button>
+          <ion-icon name="locate"></ion-icon>  
+        </ion-button>
+      </ion-buttons> -->
+    </ion-list>
+  </form>
+</ion-content>
