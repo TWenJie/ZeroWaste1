@@ -3,7 +3,7 @@ import { Injectable, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject, from, Observable, of } from "rxjs";
 import { map, switchMap, take, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { Event } from "../interfaces/feeds.interface";
+import { EventFeed } from "../interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "../interfaces/pagination.interface";
 import { CachingService } from "./caching.service";
 
@@ -13,7 +13,7 @@ import { CachingService } from "./caching.service";
 export class FeedsEventService implements OnInit, OnDestroy{
     protected _POST_URL = environment.serviceURI+'/posts/events';
 
-    protected _posts$: BehaviorSubject<Event[]> = new BehaviorSubject([]);
+    protected _posts$: BehaviorSubject<EventFeed[]> = new BehaviorSubject([]);
 
     constructor(
         protected http:HttpClient,
@@ -61,15 +61,15 @@ export class FeedsEventService implements OnInit, OnDestroy{
     }
 
     paginate(options: PaginationOptions, forceRefresh?: boolean): Observable<any> {
-        let tempResponse: PaginationResponse<Event>;
-        const url = this.genPaginationURL('unapproved',options);
+        let tempResponse: PaginationResponse<EventFeed>;
+        const url = this.genPaginationURL('',options);
         return this.getData(url,forceRefresh).pipe(
         switchMap((response)=>{
             tempResponse = response;
             return this.posts;
         }),
         take(1),
-        map((events:Event[])=>{
+        map((events:EventFeed[])=>{
             if(options.page == 0){
             events = [];
             }
@@ -77,25 +77,25 @@ export class FeedsEventService implements OnInit, OnDestroy{
             tempResponse.results = events;
             return tempResponse;
         }),
-        tap((response:PaginationResponse<Event>)=>{
+        tap((response:PaginationResponse<EventFeed>)=>{
             this._posts$.next(response.results);
         })
         )
     }
 
-    create(event: Partial<Event>): Observable<Event[]> {
-        let newEvent: Event;
+    create(event: Partial<EventFeed>): Observable<EventFeed[]> {
+        let newEvent: EventFeed;
         return this.http.post(this._POST_URL,event).pipe(
-            switchMap((response:Event)=>{
+            switchMap((response:EventFeed)=>{
                 newEvent = response;
                 return this.posts;
             }),
             take(1),
-            map((events:Event[])=>{
+            map((events:EventFeed[])=>{
                 events = events.concat(newEvent);
                 return events;
             }),
-            tap((events:Event[])=>{
+            tap((events:EventFeed[])=>{
                 this._posts$.next(events);
             })
         )

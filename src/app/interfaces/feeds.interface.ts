@@ -16,7 +16,7 @@ export interface Post {
     endTime?:string;
 }
 
-export interface Event extends Post{
+export interface EventFeed extends Post{
     eventType: string;
     isExpired: boolean;
 }
