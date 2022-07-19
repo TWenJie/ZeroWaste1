@@ -36,7 +36,8 @@
       [src]="selectedImage"
     ></ion-img>
 
-    <input type="file" accept="image/jpeg, image/png" name="image" *ngIf="usePicker" #imagePicker
+    <input type="file" accept="image/jpeg, image/png" name="image" 
+      *ngIf="usePicker" #imagePicker
       (change)="chooseFile($event)"
     >
   </form>
