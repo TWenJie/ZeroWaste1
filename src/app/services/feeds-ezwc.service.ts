@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, from, Observable, of } from "rxjs";
 import { map, switchMap, take, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { EZWCFeed } from "../interfaces/feeds.interface";
+import { EZWCFeed, UpdateEZWCFeedDto } from "../interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "../interfaces/pagination.interface";
 import { CachingService } from "./caching.service";
 
@@ -92,5 +92,31 @@ export class FeedsEZWCService{
                 this._feeds$.next(feeds);
             })
         )
+    }
+
+
+    update(id:number, values: UpdateEZWCFeedDto): Observable<EZWCFeed[]>{
+        return this.http.patch(
+            `${this._API_URL}/${id}`,
+            values
+        ).pipe(
+            switchMap((response:any)=>{
+                if(response?.affected < 1){
+                    throw new Error("Update feeds failed!");
+                }
+                return this.feeds;
+            }),
+            map((feeds:EZWCFeed[])=>{
+                const feedIndex = feeds.findIndex(f=>f.id==id);
+                const oldFeed = feeds[feedIndex];
+                Object.assign(oldFeed,values);
+                feeds[feedIndex] = oldFeed;
+                return feeds;
+            }),
+            take(1),
+            tap((feeds: EZWCFeed[])=>{
+                this._feeds$.next(feeds);
+            })
+        );
     }
 }
