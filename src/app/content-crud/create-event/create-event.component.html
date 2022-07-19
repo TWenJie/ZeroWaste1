@@ -29,6 +29,7 @@
                   </ion-label>
                   <ion-input
                   type="text"
+                  maxLength="120" 
                   formControlName="title"
                   placeholder="what is the event called?"
                   >
@@ -39,6 +40,7 @@
                     Descriptions
                   </ion-label>
                   <ion-textarea
+                  maxLength="230" 
                   formControlName="textContent"
                   placeholder="Provide more information about the event"
                   >
@@ -53,21 +55,17 @@
                     </ion-buttons>
                   </div>
                   
-                  <input type="file" accept="image/jpeg" name="image" multiple 
+                  <input type="file" accept="image/jpeg, image/png" name="image"
                     *ngIf="usePicker" #imagePicker
                     (change)="chooseFile($event)"
                   >
                 </ion-item>
-                <div *ngIf="selectedImages.length > 0">
-                  <ion-item *ngFor="let selectedImage of selectedImages">
-                    <ion-img
-                      *ngIf="selectedImage"
-                      class="preview-image"
-                      [src]="selectedImage"
-                    >
-                  </ion-img>
-                </ion-item>
-                </div>
+                <ion-img
+                    *ngIf="selectedImage" 
+                    role="button" class="preview-image" (click)="pickImage()"
+                    [src]="selectedImage"
+                  >
+                </ion-img>
                 <ion-item lines="none">
                   <h4>Start:</h4>
                 </ion-item>

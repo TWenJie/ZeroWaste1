@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/co
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
 import { ModalController, Platform, ToastController } from "@ionic/angular";
-import { Subscription } from "rxjs";
+import { of, Subscription } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { ImageUploadResponse } from "src/app/interfaces/feeds.interface";
 import { FeedsEventService } from "src/app/services/feeds-event.service";
@@ -22,7 +22,6 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     maxDate;
     usePicker: boolean = false;
     selectedImage: string;
-    selectedImages: string[] = [];
 
     private _subscriptions: Subscription[] = [];
     @ViewChild('imagePicker') filePicker: ElementRef<HTMLInputElement>;
@@ -89,10 +88,9 @@ export class CreateEventComponent implements OnInit, OnDestroy {
         // let resources:ImageUploadResponse[];
         const image = this.form.get('image').value;
         if(image){
-            this._subscriptions['imageUpload'] = this.photoService.uploadImages(image)
+            this._subscriptions['imageUpload'] = this.photoService.uploadImage(image)
             .pipe(switchMap((response)=>{
                 if(response.savedResources.length > 0){
-                    console.log('img_URL:',response.savedResources);
                     return this.feedsService.create({
                         title: this.form.get('title').value,
                         textContent: this.form.get('textContent').value,
@@ -100,6 +98,9 @@ export class CreateEventComponent implements OnInit, OnDestroy {
                         endTime: this.form.get('endTime').value,
                         resources: response.savedResources
                     })
+                }
+                else{
+                  throw new Error("Create event failed!");
                 }
             })).subscribe({next:this.createSuccessHandler.bind(this),error:this.createFailedHandler.bind(this)})
         }else {
@@ -126,7 +127,6 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     }
 
     async pickImage(){
-        this.selectedImages = [];
         if (!Capacitor.isPluginAvailable('Camera') || this.usePicker) {
             this.filePicker.nativeElement.click();
             return;
@@ -141,32 +141,18 @@ export class CreateEventComponent implements OnInit, OnDestroy {
     }
 
     chooseFile(event){
-        const pickedFiles = (event.target as HTMLInputElement).files;
-        // console.log('PickedFiles:',pickedFiles);
-        if(!pickedFiles) return;
-
-        /**
-         * Loop thru files we selected, and read using Filereader
-         */
-        const imagesBlobs = [];
-        for(let i = 0; i < pickedFiles.length; i++){
-          // console.log('each_file:',pickedFiles[i]);
-          if(!pickedFiles[i].type.match("image")) continue;
-          const fileReader = new FileReader();
-          fileReader.onload = (event) => {
-            const dataUrl = fileReader.result.toString();
-            this.selectedImages.push(dataUrl);
-            //then convert base64 image to blob
-            const imageBlob = this.convertToBlob(dataUrl);
-            imagesBlobs.push(imageBlob);
-          }
-          fileReader.readAsDataURL(pickedFiles[i]);
+        const pickedFile = (event.target as HTMLInputElement).files[0];
+        if(!pickedFile) return;
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+          const dataUrl = fileReader.result.toString();
+          this.selectedImage = dataUrl;
+          const imageBlob = this.convertToBlob(pickedFile);
+          this.form.patchValue({
+            image: imageBlob
+          });
         }
-
-        this.form.patchValue({
-          image: imagesBlobs
-        })
-        // fileReader.readAsDataURL(pickedFile);
+        fileReader.readAsDataURL(pickedFile);
     }
     
     convertToBlob(imageData: string | File) {
