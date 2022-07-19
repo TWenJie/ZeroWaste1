@@ -1,0 +1,35 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title class="ion-text-center"> New EZWC Post </ion-title>
+        <ion-buttons slot="start">
+          <ion-button (click)="modalCtrl.dismiss()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button class="ion-text-lowercase" [disabled]="!form.valid" 
+          (click)="update()">Update</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+</ion-header>
+<ion-content>
+    <form [formGroup]="form">
+        <ion-item>
+            <quill-editor
+              formControlName="textContent"
+            ></quill-editor>
+        </ion-item>
+        <ion-item>
+            <ion-label position="stacked">
+                Data studio url
+            </ion-label>
+            <ion-input
+                type="text"
+                formControlName="dataformURL"
+                placeholder="eg: https://datastudio.google.com/reporting/4afcbbdf... "
+            >
+            </ion-input>
+        </ion-item>
+        <app-image-slider *ngIf="item.resources" [images]="item.resources"></app-image-slider>
+    </form>
+</ion-content>
