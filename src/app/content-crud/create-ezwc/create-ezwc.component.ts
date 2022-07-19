@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Capacitor } from "@capacitor/core";
-import { ModalController, ToastController } from "@ionic/angular";
+import { ModalController, Platform, ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { FeedsEZWCService } from "src/app/services/feeds-ezwc.service";
@@ -25,8 +25,12 @@ export class CreateEZWCComponent implements OnInit,OnDestroy{
         private photoService: PhotoService,
         private ezwcService: FeedsEZWCService,
         private toastCtrl: ToastController,
+        private platform: Platform,
     ){}
     ngOnInit(): void {
+        if(this.platform.is('mobile')&& !this.platform.is('hybrid') || this.platform.is('desktop')){
+          this.usePicker = true;
+        }
         this.form = new FormGroup({
             textContent: new FormControl(null,{
                 validators: [Validators.required],
