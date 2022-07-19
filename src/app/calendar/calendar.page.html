@@ -50,9 +50,9 @@
         <ion-content>
           <ion-card>
             <img
-              *ngIf="selectedEvent?.resources"
+              *ngIf="selectedEvent?.resources.length > 0"
               onerror="this.remove()"
-              src="selectedEvent.resouces[0]" alt="rover" 
+              [src]="selectedEvent.resources[0].src" [alt]="selectedEvent.resources[0].alt" 
             />
             <ion-card-content>
               <div class="card-body">
