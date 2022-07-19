@@ -8,5 +8,5 @@ import { Component, Input } from "@angular/core";
 export class AvatarComponent {
     @Input() height: number = 30;
     @Input() width: number = 30;
-    @Input() image: string = "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
+    @Input() image: string = "assets/img/fallback_profile.svg";
 }

@@ -1,8 +1,8 @@
 <img
   [width]="width"
   [height]="height"
-  *ngIf="true"
   class="avatar"
   [src]="image"
   alt="avatar"
+  onerror="this.src='assets/img/fallback_profile.svg'"
 />
