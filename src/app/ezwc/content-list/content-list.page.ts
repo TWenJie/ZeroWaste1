@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { EZWCFeed } from "src/app/interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "src/app/interfaces/pagination.interface";
 import { User } from "src/app/interfaces/user.class";
+import { Role } from "src/app/interfaces/user.interface";
 import { AuthService } from "src/app/services/auth.service";
+import { EZWCActionsService } from "src/app/services/ezwc-actions.service";
 import { FeedsEZWCService } from "src/app/services/feeds-ezwc.service";
 
 @Component({
@@ -28,7 +31,8 @@ export class EZWCContentListPage implements OnInit, OnDestroy{
         private authService: AuthService,
         private feedsEZWCService: FeedsEZWCService,
         private toastCtrl: ToastController,
-        // private ezwcActionService: EZWCActionsService 
+        private ezwcActionService: EZWCActionsService,
+        private router : Router,
     ){}
 
     ngOnInit(): void {
@@ -97,5 +101,16 @@ export class EZWCContentListPage implements OnInit, OnDestroy{
 
     fetchErrorHandler(error){
         let message = error.error.message ?? 'Unable to fetch posts';
+        this.presentToast(message);
+    }
+
+    contentActionsHandler(item){
+        if(this.user._role == Role.User) return;
+        this.ezwcActionService.showActions(item);
+    }
+    
+    openDetailPageHandler(item){
+        console.log('Item:',item);
+        this.router.navigate(['tabs','ezwc','feeds',item.id]);
     }
 }

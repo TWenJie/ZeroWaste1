@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
 import { ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Post } from "src/app/interfaces/feeds.interface";
@@ -35,6 +36,7 @@ export class FeedsListPage implements OnInit, OnDestroy {
         private feedsService: FeedsService,
         private toastCtrl: ToastController,
         private contentActionsService: ContentActionsService,
+        private router : Router,
     ){}
 
     ngOnInit(): void {
@@ -155,5 +157,9 @@ export class FeedsListPage implements OnInit, OnDestroy {
             rec.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
             rec.right <= (window.innerWidth || document.documentElement.clientWidth)
         );
+    }
+
+    openDetailPageHandler(item:Post){
+        this.router.navigate(['tabs','feeds',item.id]);
     }
 }

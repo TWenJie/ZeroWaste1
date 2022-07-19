@@ -38,7 +38,7 @@ export class ContentDetailsComponent implements OnInit{
 
   ngOnInit(): void {
     this.initYoutubeApi();
-    // console.log('this.item.dataStudioURL:',this.item)
+    // console.log('this.item',this.item)
 
     if(this.item.dataStudioURL && this.URLExtractor.isDataStudioUrl(this.item.dataStudioURL)){
       // console.log('this.item.dataStudioURL:',this.item.dataStudioURL)

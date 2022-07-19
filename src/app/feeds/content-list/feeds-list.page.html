@@ -27,6 +27,7 @@
       </ion-toolbar>
     </ion-header> -->
   <app-content-list
+    (openDetailPageHandler)="openDetailPageHandler($event)"
     (contentActionsHandler)="contentActionsHandler($event)"
     #feedsContentList
     (onLoadMoreList)="fetchNext($event)"

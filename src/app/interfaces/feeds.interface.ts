@@ -54,6 +54,10 @@ export interface UpdateFeedValue {
     textContent: string;
 }
 
+export interface UpdateEZWCFeedDto extends UpdateFeedValue{
+    dataStudioURL:string;
+}
+
 export interface Comment {
     id:number;
     createdAt: Date;

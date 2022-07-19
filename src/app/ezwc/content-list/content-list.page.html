@@ -14,7 +14,9 @@
           <ion-title class="ion-text-left">E-ZWC</ion-title>
       </ion-toolbar>
     </ion-header>
-    <app-content-list 
+    <app-content-list
+      (openDetailPageHandler)="openDetailPageHandler($event)"
+      (contentActionsHandler)="contentActionsHandler($event)"
       (onRefreshList)="onRefreshList()"
       (onLoadMoreList)="fetchNext($event)"
       *ngIf="paginationResponse"

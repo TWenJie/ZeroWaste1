@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChildren } from "@angular/core";
-import { Router } from "@angular/router";
 import { Post } from "src/app/interfaces/feeds.interface";
 import { ContentDetailsComponent } from "../content-details/content-details.component";
 
@@ -14,6 +13,7 @@ export class ContentListComponent implements OnInit{
     @Output() onRefreshList: EventEmitter<null> = new EventEmitter();
     @Output() onLoadMoreList: EventEmitter<null> = new EventEmitter();
     @Output() contentActionsHandler: EventEmitter<null> = new EventEmitter();
+    @Output() openDetailPageHandler: EventEmitter<any> = new EventEmitter();
 
     /**
      * These view children are use in /feeds/content-list.page/ 
@@ -23,7 +23,6 @@ export class ContentListComponent implements OnInit{
     @ViewChildren('contentDetail') contentDetailComp;
     @ViewChildren('contentDetail',{read:ElementRef}) contentDetailRef : ElementRef<ContentDetailsComponent> []; 
     constructor(
-        private router : Router,
     ){}
 
     ngOnInit(): void {
@@ -31,7 +30,8 @@ export class ContentListComponent implements OnInit{
     }
 
     openDetailPage(item:Post){
-        this.router.navigate(['tabs','feeds',item.id]);
+        // this.router.navigate(['tabs','feeds',item.id]);
+        this.openDetailPageHandler.emit(item);
     }
 
     onRefresh(event){
