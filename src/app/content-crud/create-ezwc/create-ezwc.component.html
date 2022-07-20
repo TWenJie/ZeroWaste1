@@ -13,49 +13,53 @@
       </ion-toolbar>
 </ion-header>
 <ion-content>
-    <form [formGroup]="form">
-        <ion-item>
-            <!-- <ion-textarea id="text-content"
-                type="text"
-                row="10"
-                autoGrow="true"
-                maxLength="2500"
+    <ion-card>
+      <ion-card-content>
+        <form [formGroup]="form">
+          <ion-item>
+              <!-- <ion-textarea id="text-content"
+                  type="text"
+                  row="10"
+                  autoGrow="true"
+                  maxLength="2500"
+                  formControlName="textContent"
+                  placeholder="Write something ..."
+              ></ion-textarea> -->
+              <quill-editor
                 formControlName="textContent"
-                placeholder="Write something ..."
-            ></ion-textarea> -->
-            <quill-editor
-              formControlName="textContent"
-            ></quill-editor>
-        </ion-item>
-        <ion-item>
-            <ion-label position="stacked">
-                Data studio url
-            </ion-label>
-            <ion-input
-                type="text"
-                formControlName="dataformURL"
-                placeholder="eg: https://datastudio.google.com/reporting/4afcbbdf... "
-            >
-            </ion-input>
-        </ion-item>
-        <ion-item>
-            <div *ngIf="!selectedImage"  class="picker">
-              <ion-buttons color="primary" (click)="pickImage()" class="middle">
-                <ion-button>
-                  <ion-icon name="images-outline"></ion-icon>
-                </ion-button>
-              </ion-buttons>
-            </div>
-            <input type="file" accept="image/jpeg" 
-              name="image" multiple 
-              *ngIf="usePicker" #imagePicker
-              (change)="chooseFile($event)"
-            >
-        </ion-item>
-        <div class="">
-            <ion-img *ngFor="let image of selectedImages"
-                [src]="image"
-            ></ion-img>
-        </div>
-    </form>
+              ></quill-editor>
+          </ion-item>
+          <ion-item>
+              <ion-label position="stacked">
+                  Data studio url
+              </ion-label>
+              <ion-input
+                  type="text"
+                  formControlName="dataformURL"
+                  placeholder="eg: https://datastudio.google.com/reporting/4afcbbdf... "
+              >
+              </ion-input>
+          </ion-item>
+          <ion-item>
+              <div *ngIf="!selectedImage"  class="picker">
+                <ion-buttons color="primary" (click)="pickImage()" class="middle">
+                  <ion-button>
+                    <ion-icon name="images-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </div>
+              <input type="file" accept="image/jpeg" 
+                name="image" multiple 
+                *ngIf="usePicker" #imagePicker
+                (change)="chooseFile($event)"
+              >
+          </ion-item>
+          <div class="">
+              <ion-img *ngFor="let image of selectedImages"
+                  [src]="image"
+              ></ion-img>
+          </div>
+      </form>
+      </ion-card-content>
+    </ion-card>
 </ion-content>
