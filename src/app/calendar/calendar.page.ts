@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { CalendarComponent } from "ionic2-calendar";
 import { Subscription } from "rxjs";
 import { PaginationOptions, PaginationResponse } from "../interfaces/pagination.interface";
-import { AnalyticsService } from "../services/analytics.service";
+import { AnalyticsService, FeedEventTypes } from "../services/analytics.service";
 import { FeedsEventService } from "../services/feeds-event.service";
 import { EventFeed } from "../interfaces/feeds.interface";
 
@@ -110,14 +110,16 @@ export class CalendarPage implements OnInit, OnDestroy{
     onEventSelected(selectedEvent){
         this.isModalOpen = true;
         this.selectedEvent = selectedEvent;
-        // this.analyticsService.logEvent({
-        //   eventType: FeedEventTypes.ViewEvent,
-        //   sourceId: selectedEvent?.id
-        // }).toPromise().then(response=>{
-        //   console.log('View Calendar event logged:',response)
-        // }).catch(error=>{
-        //   console.error(error);
-        // })
+
+        //log event
+        this.analyticsService.logEvent({
+          eventType: FeedEventTypes.ViewEvent,
+          sourceId: selectedEvent?.id
+        }).toPromise().then(response=>{
+          console.log('View Calendar event logged:',response)
+        }).catch(error=>{
+          console.error(error);
+        })
       }
     
     async dismissModal(){
