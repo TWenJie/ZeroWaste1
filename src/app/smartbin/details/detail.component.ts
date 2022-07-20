@@ -5,6 +5,7 @@ import { ModalController } from "@ionic/angular";
 import { Map, marker, Marker, tileLayer } from "leaflet";
 import { CreateComplainComponent } from "src/app/content-crud/create-complain/create-complain.component";
 import { Smartbin } from "src/app/interfaces/smartbin.interface";
+import { AnalyticsService, SmartBinEventTypes } from "src/app/services/analytics.service";
 
 @Component({
     selector: 'app-smartbin-detail',
@@ -19,12 +20,19 @@ export class SmartbinDetailComponent implements OnInit, OnDestroy{
     constructor(
         private modalCtrl: ModalController,
         private sanitizer: DomSanitizer,
+        private analyticsService: AnalyticsService,
 
     ){}
 
     ngOnInit(): void {
         this.loadMap();
         window.dispatchEvent(new Event('resize'));
+        if(this.location){
+          this.analyticsService.logSmartbinEvent({
+            eventType: SmartBinEventTypes.ViewLocation,
+            sourceId: this.location._id,
+          }).toPromise();
+        }
         
     }
 
