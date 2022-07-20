@@ -6,6 +6,7 @@ import { Comment, Post } from "src/app/interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "src/app/interfaces/pagination.interface";
 import { User } from "src/app/interfaces/user.class";
 import { Role } from "src/app/interfaces/user.interface";
+import { AnalyticsService, FeedEventTypes } from "src/app/services/analytics.service";
 import { AuthService } from "src/app/services/auth.service";
 import { EZWCActionsService } from "src/app/services/ezwc-actions.service";
 import { ReactionsService } from "src/app/services/reactions.service";
@@ -34,6 +35,7 @@ export class EZWCContentDetailPage implements OnInit, OnDestroy{
         private reactionService: ReactionsService,
         private toastCtrl: ToastController,
         private ezwcActionService: EZWCActionsService,
+        private analyticsService: AnalyticsService,
 
     ){}
 
@@ -110,6 +112,10 @@ export class EZWCContentDetailPage implements OnInit, OnDestroy{
                 this.paginationResponse.results = response;
                 this.commentText = null;
                 this.presentToast('Comment created!');
+                this.analyticsService.logEvent({
+                    eventType: FeedEventTypes.CreateComment,
+                    sourceId: this.item.id
+                }).toPromise();
             },
             error: this.createCommentErrorHandler.bind(this),
         })
