@@ -7,6 +7,7 @@ import { User } from "../interfaces/user.class";
 import { Subscription } from "rxjs";
 import { Role } from "../interfaces/user.interface";
 import { CreateEZWCComponent } from "../content-crud/create-ezwc/create-ezwc.component";
+import { AnalyticsService } from "../services/analytics.service";
 
 @Component({
     selector: 'app-tabs',
@@ -67,12 +68,22 @@ export class TabsPage implements OnInit, OnDestroy {
         private actionSheetCtrl: ActionSheetController,
         private modalCtrl: ModalController,
         private authService: AuthService,
+        private analyticsService: AnalyticsService,
     ){
         // console.log( 'suth_service:', authService) ;
     }
 
     ngOnInit(): void {
-        
+        this.analyticsService.createSession().then(response=>{
+            if(response.hasOwnProperty('id')){
+              console.log('Sessions: created');
+              return;
+            }
+          }
+        ).catch(async(error)=>{
+            console.error(error);
+            console.log("Can't create session");
+        })
     }
 
     ngOnDestroy(): void {
