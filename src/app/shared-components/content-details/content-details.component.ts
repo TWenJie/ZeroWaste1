@@ -2,6 +2,7 @@ import {  Component, ContentChild, EventEmitter, Input, OnInit, Output, ViewChil
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { ToastController } from '@ionic/angular';
+import { AnalyticsService, FeedEventTypes } from 'src/app/services/analytics.service';
 import { ReactionsService } from 'src/app/services/reactions.service';
 import { ParsedTexts, ParsedYoutubeContent, URLExtractorService} from 'src/app/services/url-extractor.service';
 
@@ -32,6 +33,7 @@ export class ContentDetailsComponent implements OnInit{
   constructor(
     private URLExtractor: URLExtractorService,
     private readonly reactionsService: ReactionsService,
+    private readonly analyticsService: AnalyticsService,
     private readonly toastCtrl: ToastController,
     private readonly sanitizer: DomSanitizer,
   ) {}
@@ -67,6 +69,12 @@ export class ContentDetailsComponent implements OnInit{
       this.reactionsService.like(this.item.id).toPromise().catch(error=>{
         const message =  error?.error?.message ?? 'Failed to like,something went wrong!';
       });
+
+      this.analyticsService.logEvent({
+        eventType: FeedEventTypes.LikePost,
+        sourceId: this.item.id
+      }).toPromise();
+      
     }else{
       this.item.liked = null;
       this.item.likesCount--;
@@ -124,16 +132,16 @@ export class ContentDetailsComponent implements OnInit{
       // console.log('Video Paused');
       this.videoEndTime = new Date();
       const threshold = this.calculatePlayedDuration(this.videoStartTime,this.videoEndTime);
-      // this.logVideoEvent(threshold);
-      console.log('Trheshold_played:',threshold);
+      this.logVideoEvent(threshold);
+      // console.log('Trheshold_played:',threshold);
 
 
     }
     if(playerState == YT.PlayerState.ENDED){
       this.videoEndTime = new Date();
       const threshold = this.calculatePlayedDuration(this.videoStartTime,this.videoEndTime);
-      // this.logVideoEvent(threshold);
-      console.log('Trheshold_played:',threshold);
+      this.logVideoEvent(threshold);
+      // console.log('Trheshold_played:',threshold);
     }
   }
   
@@ -145,5 +153,18 @@ export class ContentDetailsComponent implements OnInit{
     let playedThreshold = Math.round((duration * 100)/videoDuration)
     this.durationPlayed = duration;
     return playedThreshold;
+  }
+
+  private logVideoEvent(playedThreshold){
+    if(playedThreshold > 50){
+      //create new event
+      console.log('New Video Event');
+      this.analyticsService.logEvent({
+        eventType: FeedEventTypes.WatchVideo,
+        sourceId: this.item.id,
+      }).toPromise().then((response)=>{
+        console.log('Video Event Logged:',response);
+      })
+    }
   }
 }
