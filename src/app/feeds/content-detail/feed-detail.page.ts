@@ -49,7 +49,11 @@ export class FeedDetailPage implements OnInit, OnDestroy {
             this.analyticsService.logEvent({
                 eventType: FeedEventTypes.ViewAPost,
                 sourceId: this.item.id
-            }).toPromise();
+            }).toPromise().then(response=>{
+                console.log('Event logged:',response)
+            }).catch(error=>{
+                // console.error(error);
+            });
         }
     }
 
@@ -108,7 +112,11 @@ export class FeedDetailPage implements OnInit, OnDestroy {
                 this.analyticsService.logEvent({
                     eventType: FeedEventTypes.CreateComment,
                     sourceId: this.item.id
-                }).toPromise();
+                }).toPromise().then(response=>{
+                    console.log('Event logged:',response)
+                }).catch(error=>{
+                    console.error(error);
+                });
             },
             error: this.createCommentErrorHandler.bind(this),
         })

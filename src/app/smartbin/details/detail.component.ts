@@ -31,7 +31,11 @@ export class SmartbinDetailComponent implements OnInit, OnDestroy{
           this.analyticsService.logSmartbinEvent({
             eventType: SmartBinEventTypes.ViewLocation,
             sourceId: this.location._id,
-          }).toPromise();
+          }).toPromise().then(response=>{
+            console.log('Event logged:',response)
+          }).catch(error=>{
+              console.error(error);
+          });
         }
         
     }

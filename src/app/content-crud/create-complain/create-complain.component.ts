@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ModalController, ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Smartbin } from "src/app/interfaces/smartbin.interface";
-import { AnalyticsService } from "src/app/services/analytics.service";
+import { AnalyticsService, SmartBinEventTypes } from "src/app/services/analytics.service";
 import { ComplainsService } from "src/app/services/complains.service";
 
 @Component({
@@ -60,6 +60,14 @@ export class CreateComplainComponent implements OnInit, OnDestroy {
                 this.presentToast('Complain submitted!');
                 this.dismissModal();
                 //analytics service here. use promise instead, because we don't care about the response.
+                this.analyticsService.logSmartbinEvent({
+                    eventType: SmartBinEventTypes.CreateComplain,
+                    sourceId: this.smartbin._id,
+                }).toPromise().then(response=>{
+                    console.log('Event logged:',response)
+                }).catch(error=>{
+                    console.error(error);
+                });
             },
             error: (error)=>{
                 this.form.reset();

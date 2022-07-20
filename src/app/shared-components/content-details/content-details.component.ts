@@ -73,7 +73,11 @@ export class ContentDetailsComponent implements OnInit{
       this.analyticsService.logEvent({
         eventType: FeedEventTypes.LikePost,
         sourceId: this.item.id
-      }).toPromise();
+      }).toPromise().then(response=>{
+        console.log('Event logged:',response)
+      }).catch(error=>{
+          console.error(error);
+      });
       
     }else{
       this.item.liked = null;
@@ -162,9 +166,11 @@ export class ContentDetailsComponent implements OnInit{
       this.analyticsService.logEvent({
         eventType: FeedEventTypes.WatchVideo,
         sourceId: this.item.id,
-      }).toPromise().then((response)=>{
-        console.log('Video Event Logged:',response);
-      })
+      }).toPromise().then(response=>{
+        console.log('Event logged:',response)
+      }).catch(error=>{
+          console.error(error);
+      });
     }
   }
 }
