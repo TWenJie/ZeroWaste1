@@ -4,6 +4,7 @@ import { NavController, ToastController } from "@ionic/angular";
 import { Subscription } from "rxjs";
 import { Comment, Post } from "src/app/interfaces/feeds.interface";
 import { PaginationOptions, PaginationResponse } from "src/app/interfaces/pagination.interface";
+import { AnalyticsService, FeedEventTypes } from "src/app/services/analytics.service";
 import { ContentActionsService } from "src/app/services/content-actions.service";
 import { ReactionsService } from "src/app/services/reactions.service";
 
@@ -27,6 +28,7 @@ export class FeedDetailPage implements OnInit, OnDestroy {
         private navCtrl: NavController,
         private reactionsService: ReactionsService,
         private contentActionsService: ContentActionsService,
+        private analyticsService: AnalyticsService,
         private reactionService: ReactionsService,
         private toastCtrl: ToastController,
     ){}
@@ -43,6 +45,12 @@ export class FeedDetailPage implements OnInit, OnDestroy {
             page: 0,
         }
         this.paginateComments();
+        if(this.item){
+            this.analyticsService.logEvent({
+                eventType: FeedEventTypes.ViewAPost,
+                sourceId: this.item.id
+            }).toPromise();
+        }
     }
 
     ngOnDestroy(): void {
@@ -97,6 +105,10 @@ export class FeedDetailPage implements OnInit, OnDestroy {
                 this.paginationResponse.results = response;
                 this.commentText = null;
                 this.presentToast('Comment created!');
+                this.analyticsService.logEvent({
+                    eventType: FeedEventTypes.CreateComment,
+                    sourceId: this.item.id
+                }).toPromise();
             },
             error: this.createCommentErrorHandler.bind(this),
         })
