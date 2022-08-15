@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
+import { LeafletModule } from "@asymmetrik/ngx-leaflet";
 import { IonicModule } from "@ionic/angular";
 import { ContentCRUDModule } from "../content-crud/content-creation.module";
 import { SmartbinDetailComponent } from "./details/detail.component";
@@ -12,6 +13,7 @@ import { SmartbinPageRoutingModule } from "./smartbin-routing.module";
         CommonModule,
         SmartbinPageRoutingModule,
         ContentCRUDModule,
+        LeafletModule,
     ],
     declarations: [
         SmartbinListPage,

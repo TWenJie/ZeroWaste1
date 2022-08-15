@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Browser } from "@capacitor/browser";
 import { ModalController } from "@ionic/angular";
-import { Map, marker, Marker, tileLayer } from "leaflet";
+import { latLng, Map, marker, Marker, tileLayer } from "leaflet";
 import { CreateComplainComponent } from "src/app/content-crud/create-complain/create-complain.component";
 import { Smartbin } from "src/app/interfaces/smartbin.interface";
 import { AnalyticsService, SmartBinEventTypes } from "src/app/services/analytics.service";
@@ -13,9 +13,25 @@ import { AnalyticsService, SmartBinEventTypes } from "src/app/services/analytics
     styleUrls: ['detail.component.scss'],
 })
 export class SmartbinDetailComponent implements OnInit, OnDestroy{
-    map:Map;
-    myMarker : Marker;
     @Input() location:Smartbin;
+
+    /**
+     * Options for @asymmetrik/ngx-leaflet,
+     */
+    options: {
+      layers: any[],
+      zoom: number,
+      center: any,
+    } = {
+        layers: [
+          tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+          { maxZoom: 18, minZoom: 3,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' 
+          }),
+        ],
+        zoom: 18,
+        center: latLng(0, 0),
+    }
 
     constructor(
         private modalCtrl: ModalController,
@@ -25,7 +41,7 @@ export class SmartbinDetailComponent implements OnInit, OnDestroy{
     ){}
 
     ngOnInit(): void {
-        this.loadMap();
+        this.initMap();
         window.dispatchEvent(new Event('resize'));
         if(this.location){
           this.analyticsService.logSmartbinEvent({
@@ -41,29 +57,18 @@ export class SmartbinDetailComponent implements OnInit, OnDestroy{
     }
 
     ngOnDestroy(): void {
-        this.map.remove();
     }
 
-    private loadMap():void{
-        const myCoordinate = this.location.location.coordinates;
-        this.map = new Map("mapId").setView([myCoordinate[1],myCoordinate[0]],20);
-    
-        // add tile layer to our map
-        // tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        //   { 
-        //     attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY- SA</a>'
-        //   }
-        // ).addTo(this.map);
-        tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-        }).addTo(this.map);
-    
-        //add marker to our map and enable popup with location name
-        marker([myCoordinate[1],myCoordinate[0]])
-        .addTo(this.map)
-        .bindPopup(this.location.properties.name);
-    
-      }
+    /**
+     * To fix leaflet layer not showing proeprly I decided to resolve with installing
+     * @asymmetrik/ngx-leaflet , package, Below is the code on how to use it.
+     */
+    private initMap(){
+      const myCoordinate = this.location.location.coordinates;
+      this.options.layers.push(marker([myCoordinate[1],myCoordinate[0]]));
+      this.options.center = latLng(myCoordinate[1],myCoordinate[0]);
+      
+    }
       
       sanitizeURL(url:string){
         if(!url) return false;

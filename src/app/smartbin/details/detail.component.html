@@ -48,5 +48,6 @@
     </ion-label>
   </ion-item>
 
-  <div id="mapId" style="height:250px"></div>
+  <!-- here we create a div and assign leaflet and leafletOptions attributes -->
+  <div leaflet [leafletOptions]="options" style="height:250px;width: 100vw;"></div>
 </ion-content>
