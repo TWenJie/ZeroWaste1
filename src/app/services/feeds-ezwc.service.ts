@@ -67,6 +67,11 @@ export class FeedsEZWCService{
             ezwcFeed = [];
             }
             ezwcFeed = (tempResponse.results.length > 0)? ezwcFeed.concat(tempResponse.results) : ezwcFeed;
+            ezwcFeed = ezwcFeed.sort((a,b)=> {
+                const aTime = new Date(a.createdAt).getTime();
+                const bTime =  new Date(b.createdAt).getTime();
+                return aTime-bTime;
+            })
             tempResponse.results = ezwcFeed;
             return tempResponse;
         }),
