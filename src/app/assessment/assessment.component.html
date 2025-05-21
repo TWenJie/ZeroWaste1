@@ -1,0 +1,135 @@
+<!-- src/app/assessment/assessment.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Zero Waste Assessment</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Pre-Assessment Screen -->
+  <div *ngIf="!isAssessmentActive && !isSubmitting" class="assessment-intro ion-text-center">
+    <h2>Test Your Zero Waste Knowledge</h2>
+    <p>Challenge yourself and learn about sustainability!</p>
+    
+    <!-- Difficulty selector -->
+    <ion-list>
+      <ion-radio-group [(ngModel)]="currentDifficulty">
+        <ion-list-header>
+          <ion-label>Select Difficulty</ion-label>
+        </ion-list-header>
+        
+        <ion-item>
+          <ion-label>Beginner</ion-label>
+          <ion-radio [value]="DifficultyLevel.BEGINNER"></ion-radio>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label>Intermediate</ion-label>
+          <ion-radio [value]="DifficultyLevel.INTERMEDIATE"></ion-radio>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label>Advanced</ion-label>
+          <ion-radio [value]="DifficultyLevel.ADVANCED"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+    
+    <ion-button 
+    (click)="startAssessment()"
+    expand="block" 
+    size="large"
+    color="primary">
+    START ASSESSMENT
+  </ion-button>
+    
+    <!-- Navigation to badges and leaderboard -->
+    <div class="nav-links ion-margin-top">
+      <ion-button [routerLink]="['/tabs/assessment/leaderboard']" fill="clear">
+        <ion-icon slot="start" name="trophy-outline"></ion-icon>
+        Leaderboard
+      </ion-button>
+      <ion-button [routerLink]="['/tabs/assessment/badges']" fill="clear">
+        <ion-icon slot="start" name="ribbon-outline"></ion-icon>
+        My Badges
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Active Assessment -->
+  <div *ngIf="isAssessmentActive && !isSubmitting" class="assessment-active">
+    <!-- Timer display -->
+    <div class="timer-container">
+      <ion-progress-bar [value]="assessmentConfig ? (timeRemaining / assessmentConfig.timeLimit) : 0" color="primary"></ion-progress-bar>
+      <div class="timer-display ion-text-end ion-padding-top">
+        <ion-chip outline color="primary">
+          <ion-icon name="time-outline"></ion-icon>
+          <ion-label>{{ timeRemaining }} seconds remaining</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+
+    <form [formGroup]="assessmentForm" (ngSubmit)="submitAssessment()">
+      <ion-card *ngFor="let question of currentQuestions; let i = index" class="question-card">
+        <ion-card-header>
+          <ion-card-subtitle>Question {{ i+1 }} of {{ currentQuestions.length }}</ion-card-subtitle>
+          <ion-card-title>{{ question.text }}</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <!-- Multiple Choice Questions -->
+          <ion-list *ngIf="question.type === QuestionType.MULTIPLE_CHOICE || 
+                          question.type === 'multipleChoice' || 
+                          question.type === 'MULTIPLE_CHOICE'">
+            <ion-radio-group [formControlName]="'question_' + i">
+              <ion-item *ngFor="let option of question.options">
+                <ion-label>{{ option }}</ion-label>
+                <ion-radio slot="start" [value]="option"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+          
+          <!-- True/False Questions -->
+          <ion-list *ngIf="question.type === QuestionType.TRUE_FALSE || 
+                          question.type === 'trueFalse' || 
+                          question.type === 'TRUE_FALSE'">
+            <ion-radio-group [formControlName]="'question_' + i">
+              <ion-item>
+                <ion-label>True</ion-label>
+                <ion-radio slot="start" value="true"></ion-radio>
+              </ion-item>
+              <ion-item>
+                <ion-label>False</ion-label>
+                <ion-radio slot="start" value="false"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+          
+          <!-- Short Answer Questions -->
+          <ion-item *ngIf="question.type === QuestionType.SHORT_ANSWER || 
+                          question.type === 'shortAnswer' || 
+                          question.type === 'SHORT_ANSWER'">
+            <ion-label position="stacked">Your Answer:</ion-label>
+            <ion-input [formControlName]="'question_' + i" type="text"></ion-input>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <div class="submit-button ion-padding ion-text-center">
+        <ion-button 
+          type="submit"
+          expand="block" 
+          color="primary" 
+          [disabled]="isSubmitting">
+          SUBMIT ASSESSMENT
+        </ion-button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isSubmitting" class="loading-container ion-text-center">
+    <ion-spinner name="circles"></ion-spinner>
+    <p>Submitting your assessment...</p>
+  </div>
+</ion-content>

@@ -32,6 +32,10 @@ const routes: Routes = [
                 loadChildren: () => import('../account/account.module').then(m=>m.AccountPageModule)
             },
             {
+                path: 'assessment',
+                loadChildren: () => import('../assessment/assessment.module').then(m=>m.AssessmentModule)
+            },
+            {
                 path: '',
                 redirectTo: '/tabs/feeds',
                 pathMatch: 'full'

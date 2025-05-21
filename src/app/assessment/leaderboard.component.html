@@ -1,0 +1,44 @@
+<!-- src/app/assessment/leaderboard.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/assessment"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Leaderboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="loading" class="ion-text-center ion-padding">
+    <ion-spinner name="circles"></ion-spinner>
+    <p>Loading leaderboard data...</p>
+  </div>
+  
+  <div *ngIf="!loading && leaderboard.length === 0" class="ion-text-center ion-padding">
+    <ion-icon name="trophy-outline" style="font-size: 64px; color: var(--ion-color-medium);"></ion-icon>
+    <h2>No Leaderboard Data Yet</h2>
+    <p>Be the first to complete an assessment and appear on the leaderboard!</p>
+    <ion-button routerLink="/tabs/assessment">Take an Assessment</ion-button>
+  </div>
+  
+  <ion-list *ngIf="!loading && leaderboard.length > 0">
+    <ion-list-header>
+      <ion-label>Top Scorers</ion-label>
+    </ion-list-header>
+  
+    <ion-item *ngFor="let entry of leaderboard" [class.current-user]="isCurrentUser(entry)">
+      <ion-badge slot="start" [color]="getRankColor(entry.rank)">{{ entry.rank }}</ion-badge>
+      <ion-label>
+        <h2>{{ entry.userName }}</h2>
+        <p>Score: {{ entry.score }}</p>
+      </ion-label>
+      <ion-note slot="end" *ngIf="isCurrentUser(entry)">You</ion-note>
+    </ion-item>
+  </ion-list>
+  
+  <div class="ion-text-center ion-padding" *ngIf="!loading && leaderboard.length > 0">
+    <ion-button routerLink="/tabs/assessment" fill="outline">
+      Improve Your Ranking
+    </ion-button>
+  </div>
+</ion-content>

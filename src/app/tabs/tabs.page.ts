@@ -51,8 +51,13 @@ export class TabsPage implements OnInit, OnDestroy {
             label: 'events',
             icon: 'calendar'
         },
+        {
+            path: 'assessment',
+            label: 'assessment',
+            icon: 'document-text'
+        }
 
-    ]
+    ];
 
     public appPages = [
         { title: 'Profile', url: '/tabs/profile', icon: 'person' },

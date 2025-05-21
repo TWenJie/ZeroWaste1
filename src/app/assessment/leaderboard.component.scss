@@ -1,0 +1,33 @@
+/* src/app/assessment/leaderboard.component.scss */
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-bottom: 8px;
+}
+
+p {
+  color: var(--ion-color-medium);
+  margin-bottom: 24px;
+}
+
+ion-badge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.current-user {
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  --border-color: var(--ion-color-primary);
+  border-left: 3px solid var(--ion-color-primary);
+  font-weight: bold;
+}
+
+ion-button {
+  margin-top: 20px;
+}
