@@ -1,42 +1,342 @@
-<!-- src/app/assessment/badges.component.html -->
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/assessment"></ion-back-button>
     </ion-buttons>
     <ion-title>My Badges</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="retryLoadBadges()" [disabled]="loading">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngIf="loading" class="ion-text-center ion-padding">
-    <ion-spinner name="circles"></ion-spinner>
+<ion-content>
+  
+  <div class="badge-stats-container">
+    <ion-card class="stats-card">
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">{{ badgeStats.totalEarned }}</div>
+            <div class="stat-label">Earned</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ badgeStats.totalAvailable }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ badgeStats.totalPoints }}</div>
+            <div class="stat-label">Points</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ badgeStats.completionPercentage }}%</div>
+            <div class="stat-label">Complete</div>
+          </div>
+        </div>
+        
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-text">{{ getCompletionMessage() }}</span>
+            <span class="progress-percentage">{{ badgeStats.completionPercentage }}%</span>
+          </div>
+          <ion-progress-bar 
+            [value]="badgeStats.completionPercentage / 100" 
+            [color]="getProgressColor(badgeStats.completionPercentage)">
+          </ion-progress-bar>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="!isBackendConnected()" class="connection-warning">
+    <ion-card color="warning">
+      <ion-card-content>
+        <div class="warning-content">
+          <ion-icon name="warning-outline"></ion-icon>
+          <div>
+            <h4>Limited Connectivity</h4>
+            <p>Some badges may not display correctly. Check your connection.</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <ion-card color="danger">
+      <ion-card-content>
+        <div class="error-content">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <div>
+            <h4>Error Loading Badges</h4>
+            <p>{{ error }}</p>
+            <ion-button 
+              fill="clear" 
+              color="light" 
+              (click)="retryLoadBadges()">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Retry
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="badgeStats.recentBadges.length > 0" class="recent-badges-container">
+    <ion-card class="recent-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="star-outline" color="warning"></ion-icon>
+          Recently Earned
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="recent-badges-scroll">
+          <div 
+            *ngFor="let badge of badgeStats.recentBadges" 
+            class="recent-badge-item"
+            (click)="viewBadgeDetails(badge)">
+            <div class="recent-badge-image">
+              <div class="badge-icon" [style.color]="badge.color || '#666'">
+                <ion-icon [name]="badge.icon || 'trophy-outline'"></ion-icon>
+              </div>
+            </div>
+            <div class="recent-badge-info">
+              <h4>{{ badge.name }}</h4>
+              <p>{{ badge.earnedDate | date:'MMM d' }}</p>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="!loading && userProgress" class="recommendations-container">
+    <ion-card class="recommendations-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="bulb-outline" color="warning"></ion-icon>
+          Recommendations
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngFor="let recommendation of getBadgeRecommendations()" class="recommendation-item">
+          <p>{{ recommendation }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div class="filters-container">
+    <ion-card class="filters-card">
+      <ion-card-content>
+        <h4>📂 Categories</h4>
+        <div class="category-buttons">
+          <ion-button 
+            *ngFor="let category of categories" 
+            [fill]="selectedCategory === category.value ? 'solid' : 'outline'"
+            [color]="selectedCategory === category.value ? 'primary' : 'medium'"
+            size="small"
+            (click)="setCategoryFilter(category.value)">
+            <ion-icon [name]="category.icon" slot="start"></ion-icon>
+            {{ category.label }}
+          </ion-button>
+        </div>
+        
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="circles" color="primary"></ion-spinner>
     <p>Loading your badges...</p>
   </div>
-  
-  <div *ngIf="!loading && badges.length === 0" class="ion-text-center ion-padding">
-    <ion-icon name="ribbon-outline" style="font-size: 64px; color: var(--ion-color-medium);"></ion-icon>
-    <h2>No Badges Yet</h2>
-    <p>Complete assessments to earn badges and track your progress!</p>
-    <ion-button routerLink="/tabs/assessment">Take an Assessment</ion-button>
+
+  <div *ngIf="!loading && !error && filteredBadges.length === 0" class="empty-state">
+    <ion-card class="empty-card">
+      <ion-card-content>
+        <ion-icon name="ribbon-outline" class="empty-icon"></ion-icon>
+        <h2 *ngIf="badgeStats.totalEarned === 0">No Badges Yet</h2>
+        <h2 *ngIf="badgeStats.totalEarned > 0">No Matching Badges</h2>
+        <p *ngIf="badgeStats.totalEarned === 0">Complete assessments to earn badges!</p>
+        <p *ngIf="badgeStats.totalEarned > 0">Try adjusting your filters.</p>
+        <ion-button 
+          *ngIf="badgeStats.totalEarned === 0" 
+          routerLink="/tabs/assessment" 
+          color="primary">
+          Take Assessment
+        </ion-button>
+        <ion-button 
+          *ngIf="badgeStats.totalEarned > 0" 
+          fill="outline" 
+          color="medium"
+          (click)="setCategoryFilter('all')">
+          Clear Filters
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
   </div>
-  
-  <ion-grid *ngIf="!loading && badges.length > 0">
-    <ion-row>
-      <ion-col size="12" size-md="6" *ngFor="let badge of badges">
-        <ion-card>
-          <ion-card-header>
-            <ion-thumbnail slot="start" class="badge-image">
-              <img [src]="badge.imageUrl || 'assets/default-badge.png'" alt="Badge">
-            </ion-thumbnail>
-            <ion-card-title>{{ badge.name }}</ion-card-title>
-            <ion-card-subtitle>{{ badge.criteria }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <p>{{ badge.description }}</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
+  <div *ngIf="!loading && !error && filteredBadges.length > 0" class="badges-container">
+    <ion-card 
+      *ngFor="let badge of filteredBadges; trackBy: trackByBadgeId" 
+      class="badge-card"
+      [class.earned]="isBadgeEarned(badge)"
+      [class]="'rarity-' + badge.rarity"
+      (click)="viewBadgeDetails(badge)">
+      
+      <div class="badge-image-container">
+        <div class="badge-icon-wrapper">
+          <ion-icon 
+            [name]="badge.icon || 'trophy-outline'" 
+            class="badge-icon"
+            [style.color]="badge.color || '#666'">
+          </ion-icon>
+        </div>
+        
+        <div *ngIf="!isBadgeEarned(badge)" class="badge-overlay"></div>
+        
+        <ion-icon 
+          *ngIf="isBadgeEarned(badge)" 
+          name="checkmark-circle" 
+          color="success" 
+          class="earned-icon">
+        </ion-icon>
+        
+        <div class="rarity-corner" [class]="'rarity-' + badge.rarity">
+          <ion-icon [name]="getBadgeRarityIcon(badge.rarity)"></ion-icon>
+        </div>
+      </div>
+      
+      <ion-card-content>
+        <div class="badge-header">
+          <ion-card-title>{{ badge.name }}</ion-card-title>
+          <ion-chip [color]="getBadgeRarityColor(badge.rarity)" size="small">
+            {{ badge.rarity }}
+          </ion-chip>
+        </div>
+        
+        <ion-card-subtitle>
+          <ion-icon [name]="getCategoryIcon(badge.category)"></ion-icon>
+          {{ badge.category }}
+        </ion-card-subtitle>
+        
+        <p class="badge-description">{{ badge.description }}</p>
+        <p *ngIf="badge.criteria" class="badge-criteria">{{ badge.criteria }}</p>
+        
+        <div *ngIf="badge.requirements && badge.requirements.length > 0 && !isBadgeEarned(badge)" class="requirements-section">
+          <h5>Requirements:</h5>
+          <ul class="requirements-list">
+            <li *ngFor="let requirement of badge.requirements">
+              {{ requirement.description }}
+            </li>
+          </ul>
+        </div>
+        
+        <div *ngIf="!isBadgeEarned(badge)" class="progress-section">
+          <div class="progress-header">
+            <span class="progress-text">Progress</span>
+            <span class="progress-percentage">{{ getBadgeProgress(badge) }}%</span>
+          </div>
+          <ion-progress-bar 
+            [value]="getBadgeProgress(badge) / 100" 
+            [color]="getProgressColor(getBadgeProgress(badge))">
+          </ion-progress-bar>
+        </div>
+        
+        <div *ngIf="isBadgeEarned(badge)" class="earned-info">
+          <ion-chip color="success" size="small">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <ion-label>Earned {{ badge.earnedDate | date:'MMM d, y' }}</ion-label>
+          </ion-chip>
+        </div>
+        
+        <div class="badge-points">
+          <ion-chip color="tertiary" size="small">
+            <ion-icon name="star-outline"></ion-icon>
+            <ion-label>{{ badge.points || 0 }} points</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="!loading && !error && getNextBadgeToEarn() as nextBadge" class="next-badge-container">
+    <ion-card class="next-badge-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="target-outline" color="light"></ion-icon>
+          Next Badge to Earn
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="next-badge-content">
+          <div class="next-badge-image">
+            <div class="badge-icon-wrapper">
+              <ion-icon 
+                [name]="nextBadge.icon || 'trophy-outline'" 
+                class="badge-icon"
+                [style.color]="nextBadge.color || '#fff'">
+              </ion-icon>
+            </div>
+          </div>
+          <div class="next-badge-info">
+            <h3>{{ nextBadge.name }}</h3>
+            <p>{{ nextBadge.description }}</p>
+            <div class="next-progress">
+              <span>{{ getBadgeProgress(nextBadge) }}% Complete</span>
+              <ion-progress-bar 
+                [value]="getBadgeProgress(nextBadge) / 100" 
+                color="light">
+              </ion-progress-bar>
+            </div>
+          </div>
+        </div>
+        <ion-button 
+          expand="block" 
+          fill="outline"
+          color="light"
+          routerLink="/tabs/assessment">
+          <ion-icon name="school-outline" slot="start"></ion-icon>
+          Take Assessment
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div *ngIf="!loading && userProgress" class="quick-actions-container">
+    <ion-card class="quick-actions-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="flash-outline" color="primary"></ion-icon>
+          Quick Actions
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="action-buttons">
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            color="primary"
+            routerLink="/tabs/assessment">
+            <ion-icon name="school-outline" slot="start"></ion-icon>
+            Take Assessment
+          </ion-button>
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            color="secondary"
+            routerLink="/tabs/leaderboard">
+            <ion-icon name="trophy-outline" slot="start"></ion-icon>
+            View Leaderboard
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
 </ion-content>

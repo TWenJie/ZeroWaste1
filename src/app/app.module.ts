@@ -7,7 +7,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
@@ -16,38 +16,44 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { SharedDirectivesModule } from './directives/shared-directives.module';
 import { QuillModule, QuillModules } from 'ngx-quill';
 
+import { environment } from '../environments/environment';
 
-const quilsModules: QuillModules = {
+// ✅ MongoDB Service Provider
+import { MongoDBService } from './services/mongodb.service';
+
+// ✅ Consistent naming for Quill modules
+const quillModules: QuillModules = {
   toolbar: [
-      ['bold','italic','underline','strike'],
-      ['blockquote'],
-      [{list:'ordered'},{list:'bullet'}],
-      [{header: [1,2,3,4,5,6,false]}],
-      [{align:[]}],
-      ['link'],
-  ]
-}
-
+    ['bold', 'italic', 'underline', 'strike'],
+    ['blockquote'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ align: [] }],
+    ['link'],
+  ],
+};
 
 @NgModule({
-  declarations: [AppComponent,
+  declarations: [
+    AppComponent,
   ],
   imports: [
     SharedDirectivesModule,
-    BrowserModule, 
-    IonicModule.forRoot(), 
-    AppRoutingModule, 
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
     HttpClientModule,
     IonicStorageModule.forRoot({
-      driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB]
+      driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB],
     }),
     QuillModule.forRoot({
-      modules: quilsModules,
+      modules: quillModules,
     }),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi:true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    MongoDBService, // ✅ MongoDB Service Provider
   ],
   bootstrap: [AppComponent],
 })

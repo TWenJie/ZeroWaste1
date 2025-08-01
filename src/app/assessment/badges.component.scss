@@ -1,0 +1,825 @@
+/* src/app/assessment/badges.component.scss */
+
+/* Badge Statistics Section */
+.badge-stats-container {
+  padding: 16px;
+  
+  .stats-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+      
+      .stat-item {
+        text-align: center;
+        
+        .stat-number {
+          font-size: 24px;
+          font-weight: bold;
+          color: var(--ion-color-primary);
+          margin-bottom: 4px;
+        }
+        
+        .stat-label {
+          font-size: 12px;
+          color: var(--ion-color-medium);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+    
+    .progress-section {
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        
+        .progress-text {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--ion-color-dark);
+        }
+        
+        .progress-percentage {
+          font-size: 14px;
+          font-weight: bold;
+          color: var(--ion-color-success);
+        }
+      }
+      
+      ion-progress-bar {
+        height: 8px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+/* Connection Warning */
+.connection-warning {
+  padding: 0 16px;
+  
+  .warning-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+}
+
+/* Error State */
+.error-state {
+  padding: 0 16px;
+  
+  .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+}
+
+/* Recent Badges */
+.recent-badges-container {
+  padding: 0 16px;
+  
+  .recent-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .recent-badges-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 8px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .recent-badge-item {
+        min-width: 80px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+        
+        .recent-badge-image {
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 8px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--ion-color-light);
+          
+          .badge-icon {
+            ion-icon {
+              font-size: 32px;
+            }
+          }
+        }
+        
+        .recent-badge-info {
+          h4 {
+            margin: 0 0 4px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ion-color-dark);
+          }
+          
+          p {
+            margin: 0;
+            font-size: 10px;
+            color: var(--ion-color-medium);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Recommendations */
+.recommendations-container {
+  padding: 0 16px;
+  
+  .recommendations-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .recommendation-item {
+      margin-bottom: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--ion-color-dark);
+      }
+    }
+  }
+}
+
+/* Filters Section */
+.filters-container {
+  padding: 0 16px;
+  
+  .filters-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .filter-section {
+      margin-bottom: 16px;
+      
+      h4 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+      }
+      
+      .category-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        
+        ion-button {
+          --border-radius: 20px;
+          text-transform: none;
+          font-size: 12px;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            transform: translateY(-1px);
+          }
+        }
+      }
+    }
+
+  }
+}
+
+/* Loading and Empty States */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 16px;
+  
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  padding: 32px 16px;
+  
+  .empty-card {
+    text-align: center;
+    border-radius: 12px;
+    
+    .empty-icon {
+      font-size: 64px;
+      color: var(--ion-color-medium);
+      margin-bottom: 16px;
+    }
+    
+    h2 {
+      margin: 0 0 8px 0;
+      color: var(--ion-color-dark);
+      font-size: 20px;
+    }
+    
+    p {
+      margin: 0 0 24px 0;
+      color: var(--ion-color-medium);
+      font-size: 14px;
+    }
+    
+    ion-button {
+      margin-top: 8px;
+    }
+  }
+}
+
+/* Badges Container */
+.badges-container {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  
+  .badge-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    &.earned {
+      border: 2px solid var(--ion-color-success);
+      
+      .badge-icon-wrapper {
+        filter: none;
+        opacity: 1;
+      }
+    }
+    
+    &:not(.earned) {
+      .badge-icon-wrapper {
+        filter: grayscale(100%);
+        opacity: 0.6;
+      }
+    }
+    
+    /* Rarity Styling */
+    &.rarity-common { 
+      border-top: 4px solid var(--ion-color-success);
+      
+      &:hover {
+        box-shadow: 0 8px 24px rgba(var(--ion-color-success-rgb), 0.3);
+      }
+    }
+    
+    &.rarity-rare { 
+      border-top: 4px solid var(--ion-color-primary);
+      
+      &:hover {
+        box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.3);
+      }
+    }
+    
+    &.rarity-epic { 
+      border-top: 4px solid var(--ion-color-secondary);
+      
+      &:hover {
+        box-shadow: 0 8px 24px rgba(var(--ion-color-secondary-rgb), 0.3);
+      }
+    }
+    
+    &.rarity-legendary { 
+      border-top: 4px solid var(--ion-color-warning);
+      background: linear-gradient(135deg, rgba(var(--ion-color-warning-rgb), 0.1), rgba(var(--ion-color-warning-rgb), 0.05));
+      
+      &:hover {
+        box-shadow: 0 8px 24px rgba(var(--ion-color-warning-rgb), 0.4);
+      }
+    }
+    
+    .badge-image-container {
+      position: relative;
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--ion-color-light), var(--ion-color-light-tint));
+      
+      .badge-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        
+        .badge-icon {
+          font-size: 40px;
+        }
+      }
+      
+      .badge-overlay {
+        position: absolute;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+      }
+      
+      .earned-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        background: white;
+        border-radius: 50%;
+        padding: 4px;
+      }
+      
+      .rarity-corner {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        
+        &.rarity-common { background: var(--ion-color-success); }
+        &.rarity-rare { background: var(--ion-color-primary); }
+        &.rarity-epic { background: var(--ion-color-secondary); }
+        &.rarity-legendary { 
+          background: var(--ion-color-warning);
+          animation: pulse 2s infinite;
+        }
+      }
+    }
+    
+    .badge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      
+      ion-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+        color: var(--ion-color-dark);
+      }
+      
+      ion-chip {
+        margin-left: 8px;
+        font-size: 10px;
+        text-transform: capitalize;
+      }
+    }
+    
+    ion-card-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--ion-color-medium);
+      font-size: 12px;
+      margin-bottom: 12px;
+      text-transform: capitalize;
+      
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+    
+    .badge-description {
+      font-size: 14px;
+      color: var(--ion-color-dark);
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+    }
+    
+    .badge-criteria {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      margin: 0 0 12px 0;
+      font-style: italic;
+      line-height: 1.3;
+    }
+    
+    .requirements-section {
+      margin-bottom: 16px;
+      
+      h5 {
+        margin: 0 0 8px 0;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ion-color-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .requirements-list {
+        margin: 0;
+        padding-left: 16px;
+        
+        li {
+          font-size: 11px;
+          color: var(--ion-color-medium);
+          margin-bottom: 4px;
+          line-height: 1.3;
+        }
+      }
+    }
+    
+    .progress-section {
+      margin-bottom: 16px;
+      
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        
+        .progress-text {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--ion-color-dark);
+        }
+        
+        .progress-percentage {
+          font-size: 12px;
+          font-weight: bold;
+          color: var(--ion-color-primary);
+        }
+      }
+      
+      ion-progress-bar {
+        height: 6px;
+        border-radius: 3px;
+      }
+    }
+    
+    .earned-info {
+      margin-bottom: 12px;
+      
+      ion-chip {
+        --background: rgba(var(--ion-color-success-rgb), 0.1);
+        --color: var(--ion-color-success);
+        font-size: 10px;
+      }
+    }
+    
+    .badge-points {
+      ion-chip {
+        --background: rgba(var(--ion-color-tertiary-rgb), 0.1);
+        --color: var(--ion-color-tertiary);
+        font-size: 10px;
+      }
+    }
+  }
+}
+
+/* Next Badge Recommendation */
+.next-badge-container {
+  padding: 16px;
+  
+  .next-badge-card {
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+    color: white;
+    box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.3);
+    
+    ion-card-title {
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+    }
+    
+    .next-badge-content {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      .next-badge-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        
+        .badge-icon-wrapper {
+          .badge-icon {
+            font-size: 32px;
+          }
+        }
+      }
+      
+      .next-badge-info {
+        flex: 1;
+        
+        h3 {
+          margin: 0 0 8px 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: white;
+        }
+        
+        p {
+          margin: 0 0 12px 0;
+          font-size: 14px;
+          opacity: 0.9;
+          line-height: 1.4;
+        }
+        
+        .next-progress {
+          span {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+          }
+          
+          ion-progress-bar {
+            margin-top: 4px;
+            height: 6px;
+            border-radius: 3px;
+            --background: rgba(255, 255, 255, 0.3);
+            --progress-background: white;
+          }
+        }
+      }
+    }
+    
+    ion-button {
+      --background: rgba(255, 255, 255, 0.2);
+      --color: white;
+      --border-color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+      
+      &:hover {
+        --background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+/* Quick Actions */
+.quick-actions-container {
+  padding: 16px;
+  
+  .quick-actions-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      
+      ion-button {
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 1.5s infinite;
+  background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-size: 800px 104px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .badge-stats-container .stats-card .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    
+    .stat-item .stat-number {
+      font-size: 20px;
+    }
+  }
+  
+  .filters-container .filters-card .filter-section .category-buttons {
+    ion-button {
+      font-size: 11px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+    }
+  }
+  
+  .badges-container {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .next-badge-container .next-badge-card .next-badge-content {
+    flex-direction: column;
+    text-align: center;
+    
+    .next-badge-image {
+      align-self: center;
+    }
+  }
+  
+  .quick-actions-container .quick-actions-card .action-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-badges-container .recent-card .recent-badges-scroll {
+    .recent-badge-item {
+      min-width: 70px;
+      
+      .recent-badge-image {
+        width: 50px;
+        height: 50px;
+        
+        .badge-icon ion-icon {
+          font-size: 24px;
+        }
+      }
+      
+      .recent-badge-info h4 {
+        font-size: 11px;
+      }
+    }
+  }
+  
+  .badge-stats-container .stats-card .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    
+    .stat-item {
+      .stat-number {
+        font-size: 18px;
+      }
+      
+      .stat-label {
+        font-size: 11px;
+      }
+    }
+  }
+  
+  .filters-container .filters-card .filter-section .category-buttons {
+    ion-button {
+      font-size: 10px;
+      --padding-start: 6px;
+      --padding-end: 6px;
+      min-height: 32px;
+    }
+  }
+  
+  .badges-container .badge-card {
+    .badge-image-container {
+      padding: 16px;
+      
+      .badge-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        
+        .badge-icon {
+          font-size: 30px;
+        }
+      }
+    }
+    
+    .badge-header ion-card-title {
+      font-size: 14px;
+    }
+    
+    .badge-description {
+      font-size: 13px;
+    }
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .badge-card {
+    .badge-image-container {
+      background: linear-gradient(135deg, var(--ion-color-dark), var(--ion-color-dark-tint));
+      
+      .badge-icon-wrapper {
+        background: var(--ion-color-dark-shade);
+      }
+    }
+    
+    &.rarity-legendary {
+      background: linear-gradient(135deg, rgba(var(--ion-color-warning-rgb), 0.2), rgba(var(--ion-color-warning-rgb), 0.1));
+    }
+  }
+  
+  .next-badge-card {
+    background: linear-gradient(135deg, var(--ion-color-primary-shade), var(--ion-color-primary-tint));
+  }
+}

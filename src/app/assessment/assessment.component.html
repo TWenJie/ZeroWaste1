@@ -1,4 +1,4 @@
-<!-- src/app/assessment/assessment.component.html -->
+<!-- src/app/assessment/assessment.component.html - UPDATED WITH PROGRESS BAR -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Zero Waste Assessment</ion-title>
@@ -6,16 +6,155 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  
+  <!-- Progress Card - Only show on initial screen -->
+  <ion-card *ngIf="userProgress && !isAssessmentActive && !isSubmitting && !showResults && !showCategorySelector" class="progress-card">
+    <ion-card-header>
+      <ion-card-title>Your Progress</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="progress-stats">
+        <div class="stat-row">
+          <div class="stat-item">
+            <ion-text color="primary">
+              <h2>{{ userProgress.attemptsCompleted || 0 }}</h2>
+            </ion-text>
+            <ion-text color="medium">
+              <p>Assessments Completed</p>
+            </ion-text>
+          </div>
+          <div class="stat-item">
+            <ion-text color="primary">
+              <h2>{{ getAverageScore() || 0 }}%</h2>
+            </ion-text>
+            <ion-text color="medium">
+              <p>Average Score</p>
+            </ion-text>
+          </div>
+          <div class="stat-item">
+            <ion-text color="primary">
+              <h2>{{ (userProgress.badgesEarned && userProgress.badgesEarned.length) || 0 }}</h2>
+            </ion-text>
+            <ion-text color="medium">
+              <p>Badges Earned</p>
+            </ion-text>
+          </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="overall-progress">
+          <ion-text color="medium">
+            <small>Overall Progress</small>
+          </ion-text>
+          <ion-progress-bar [value]="(getProgressPercentage() || 0) / 100" color="primary"></ion-progress-bar>
+          <ion-text color="dark">
+            <small>{{ getProgressPercentage() || 0 }}%</small>
+          </ion-text>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Category Selection Screen -->
+  <div *ngIf="showCategorySelector && !selectedCategory" class="category-selection">
+    <h2 class="ion-text-center">Choose Your Assessment Category</h2>
+    <p class="ion-text-center">Select a topic to focus your learning</p>
+    
+    <div class="categories-grid">
+      <ion-card 
+        *ngFor="let category of availableCategories" 
+        class="category-card"
+        (click)="selectCategory(category)"
+        button="true">
+        
+        <ion-card-header>
+          <div class="category-icon" [style.color]="category.color">
+            {{ category.icon }}
+          </div>
+          <ion-card-title>{{ category.name }}</ion-card-title>
+          <ion-card-subtitle>{{ category.description }}</ion-card-subtitle>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <div class="category-stats">
+            <span class="question-count">{{ category.questionCount }} questions</span>
+            <span class="difficulties">{{ category.difficulties.length }} difficulty levels</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    
+    <div class="ion-text-center ion-margin-top">
+      <ion-button fill="clear" (click)="showCategorySelector = false">
+        ← Back to General Assessment
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Difficulty Selection for Selected Category -->
+  <div *ngIf="showCategorySelector && selectedCategory" class="difficulty-selection">
+    <div class="selected-category-info ion-text-center">
+      <div class="category-icon-large" [style.color]="selectedCategory.color">
+        {{ selectedCategory.icon }}
+      </div>
+      <h2>{{ selectedCategory.name }}</h2>
+      <p>{{ selectedCategory.description }}</p>
+    </div>
+
+    <h3 class="ion-text-center">Select Difficulty Level</h3>
+    
+    <div class="difficulty-options">
+      <ion-button 
+        *ngFor="let difficulty of selectedCategory.difficulties"
+        expand="block"
+        size="large"
+        class="difficulty-btn"
+        [class]="getDifficultyClass(difficulty)"
+        (click)="selectDifficulty(difficulty)">
+        
+        <div class="difficulty-content">
+          <strong>{{ getDifficultyLabel(difficulty) }}</strong>
+          <small>{{ getDifficultyInfo(difficulty) }}</small>
+        </div>
+      </ion-button>
+    </div>
+
+    <div class="ion-text-center ion-margin-top">
+      <ion-button fill="clear" (click)="goBackToCategories()">
+        ← Choose Different Category
+      </ion-button>
+    </div>
+  </div>
+
   <!-- Pre-Assessment Screen -->
-  <div *ngIf="!isAssessmentActive && !isSubmitting" class="assessment-intro ion-text-center">
+  <div *ngIf="!isAssessmentActive && !isSubmitting && !showResults && !showCategorySelector" class="assessment-intro ion-text-center">
     <h2>Test Your Zero Waste Knowledge</h2>
     <p>Challenge yourself and learn about sustainability!</p>
     
-    <!-- Difficulty selector -->
+    <!-- Category-based Assessment Button -->
+    <ion-button 
+      (click)="startCategoryBasedAssessment()"
+      expand="block" 
+      size="large"
+      color="primary"
+      class="ion-margin-bottom">
+      <ion-icon slot="start" name="albums-outline"></ion-icon>
+      START CATEGORY ASSESSMENT
+    </ion-button>
+    
+    <ion-text color="medium">
+      <p><small>Choose from specific topics: Zero Waste, 3R Principles, or Composting</small></p>
+    </ion-text>
+    
+    <ion-text color="medium">
+      <p>- OR -</p>
+    </ion-text>
+    
+    <!-- Difficulty selector for general assessment -->
     <ion-list>
       <ion-radio-group [(ngModel)]="currentDifficulty">
         <ion-list-header>
-          <ion-label>Select Difficulty</ion-label>
+          <ion-label>General Assessment - Select Difficulty</ion-label>
         </ion-list-header>
         
         <ion-item>
@@ -36,15 +175,21 @@
     </ion-list>
     
     <ion-button 
-    (click)="startAssessment()"
-    expand="block" 
-    size="large"
-    color="primary">
-    START ASSESSMENT
-  </ion-button>
+      (click)="startGeneralAssessment()"
+      expand="block" 
+      size="large"
+      fill="outline"
+      color="primary">
+      START GENERAL ASSESSMENT
+    </ion-button>
     
     <!-- Navigation to badges and leaderboard -->
     <div class="nav-links ion-margin-top">
+      <ion-button [routerLink]="['/dashboard']" fill="clear">
+        <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
+        View Dashboard
+      </ion-button>
+      
       <ion-button [routerLink]="['/tabs/assessment/leaderboard']" fill="clear">
         <ion-icon slot="start" name="trophy-outline"></ion-icon>
         Leaderboard
@@ -56,80 +201,295 @@
     </div>
   </div>
 
-  <!-- Active Assessment -->
-  <div *ngIf="isAssessmentActive && !isSubmitting" class="assessment-active">
-    <!-- Timer display -->
-    <div class="timer-container">
-      <ion-progress-bar [value]="assessmentConfig ? (timeRemaining / assessmentConfig.timeLimit) : 0" color="primary"></ion-progress-bar>
-      <div class="timer-display ion-text-end ion-padding-top">
-        <ion-chip outline color="primary">
-          <ion-icon name="time-outline"></ion-icon>
-          <ion-label>{{ timeRemaining }} seconds remaining</ion-label>
-        </ion-chip>
+  <!-- ✅ ACTIVE ASSESSMENT WITH REAL-TIME PROGRESS BAR -->
+  <div *ngIf="isAssessmentActive && !isSubmitting && !showResults" class="assessment-active">
+    
+    <!-- ✅ ASSESSMENT PROGRESS HEADER -->
+    <div class="assessment-progress-header">
+      <!-- Category Info Header -->
+      <div class="category-header" *ngIf="selectedCategory">
+        <div class="category-info">
+          <span class="category-icon-small" [style.color]="selectedCategory.color">
+            {{ selectedCategory.icon }}
+          </span>
+          <div class="category-details">
+            <h3>{{ selectedCategory.name }}</h3>
+            <span class="difficulty-badge" [class]="getDifficultyClass(selectedDifficulty || currentDifficulty)">
+              {{ getDifficultyLabel(selectedDifficulty || currentDifficulty) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ REAL-TIME PROGRESS BAR -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <div class="progress-stats">
+            <span class="questions-answered">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              {{ getQuestionsAnswered() }} answered
+            </span>
+            <span class="progress-percentage">{{ progressPercentage }}% complete</span>
+          </div>
+        </div>
+        <ion-progress-bar 
+          [value]="progressPercentage / 100" 
+          [color]="getProgressBarColor()">
+        </ion-progress-bar>
+      </div>
+
+      <!-- Timer display -->
+      <div class="timer-container">
+        <ion-progress-bar [value]="timeRemaining / assessmentConfig.timeLimit" color="tertiary"></ion-progress-bar>
+        <div class="timer-display ion-text-end ion-padding-top">
+          <ion-chip outline color="primary">
+            <ion-icon name="time-outline"></ion-icon>
+            <ion-label>{{ formatTime(timeRemaining) }} remaining</ion-label>
+          </ion-chip>
+        </div>
       </div>
     </div>
 
-    <form [formGroup]="assessmentForm" (ngSubmit)="submitAssessment()">
-      <ion-card *ngFor="let question of currentQuestions; let i = index" class="question-card">
+    <!-- ✅ ENHANCED QUESTION NAVIGATION (OPTIONAL) -->
+    <div class="question-navigation" *ngIf="currentQuestions.length > 1">
+      <div class="question-tabs">
+        <ion-button 
+          *ngFor="let question of currentQuestions; let i = index"
+          fill="clear"
+          size="small"
+          [color]="isQuestionAnswered(i) ? 'success' : (i === currentQuestionIndex ? 'primary' : 'medium')"
+          (click)="goToQuestion(i)">
+          {{ i + 1 }}
+          <ion-icon 
+            *ngIf="isQuestionAnswered(i)" 
+            name="checkmark-circle" 
+            slot="end">
+          </ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- ✅ SINGLE QUESTION DISPLAY (ALTERNATIVE LAYOUT) -->
+    <div class="single-question-view" *ngIf="getCurrentQuestion() && currentQuestions.length > 0">
+      <ion-card class="current-question-card">
         <ion-card-header>
-          <ion-card-subtitle>Question {{ i+1 }} of {{ currentQuestions.length }}</ion-card-subtitle>
-          <ion-card-title>{{ question.text }}</ion-card-title>
+          <ion-card-subtitle>
+            Question {{ currentQuestionIndex + 1 }} of {{ currentQuestions.length }}
+            <span *ngIf="selectedCategory" class="category-tag" [style.background-color]="selectedCategory.color">
+              {{ selectedCategory.name }}
+            </span>
+          </ion-card-subtitle>
+          <ion-card-title>{{ getCurrentQuestion()?.text }}</ion-card-title>
         </ion-card-header>
         
         <ion-card-content>
-          <!-- Multiple Choice Questions -->
-          <ion-list *ngIf="question.type === QuestionType.MULTIPLE_CHOICE || 
-                          question.type === 'multipleChoice' || 
-                          question.type === 'MULTIPLE_CHOICE'">
-            <ion-radio-group [formControlName]="'question_' + i">
-              <ion-item *ngFor="let option of question.options">
-                <ion-label>{{ option }}</ion-label>
-                <ion-radio slot="start" [value]="option"></ion-radio>
-              </ion-item>
-            </ion-radio-group>
-          </ion-list>
-          
-          <!-- True/False Questions -->
-          <ion-list *ngIf="question.type === QuestionType.TRUE_FALSE || 
-                          question.type === 'trueFalse' || 
-                          question.type === 'TRUE_FALSE'">
-            <ion-radio-group [formControlName]="'question_' + i">
-              <ion-item>
-                <ion-label>True</ion-label>
-                <ion-radio slot="start" value="true"></ion-radio>
-              </ion-item>
-              <ion-item>
-                <ion-label>False</ion-label>
-                <ion-radio slot="start" value="false"></ion-radio>
-              </ion-item>
-            </ion-radio-group>
-          </ion-list>
-          
-          <!-- Short Answer Questions -->
-          <ion-item *ngIf="question.type === QuestionType.SHORT_ANSWER || 
-                          question.type === 'shortAnswer' || 
-                          question.type === 'SHORT_ANSWER'">
-            <ion-label position="stacked">Your Answer:</ion-label>
-            <ion-input [formControlName]="'question_' + i" type="text"></ion-input>
-          </ion-item>
+          <form [formGroup]="assessmentForm" *ngIf="assessmentForm">
+            <!-- Multiple Choice Questions -->
+            <ion-list *ngIf="getCurrentQuestion()?.type === QuestionType.MULTIPLE_CHOICE || 
+                            getCurrentQuestion()?.type === 'multipleChoice' || 
+                            getCurrentQuestion()?.type === 'MULTIPLE_CHOICE'">
+              <ion-radio-group [formControlName]="'question_' + currentQuestionIndex">
+                <ion-item *ngFor="let option of getCurrentQuestion()?.options">
+                  <ion-label>{{ option }}</ion-label>
+                  <ion-radio slot="start" [value]="option"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            
+            <!-- True/False Questions -->
+            <ion-list *ngIf="getCurrentQuestion()?.type === QuestionType.TRUE_FALSE || 
+                            getCurrentQuestion()?.type === 'trueFalse' || 
+                            getCurrentQuestion()?.type === 'TRUE_FALSE'">
+              <ion-radio-group [formControlName]="'question_' + currentQuestionIndex">
+                <ion-item>
+                  <ion-label>True</ion-label>
+                  <ion-radio slot="start" value="true"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>False</ion-label>
+                  <ion-radio slot="start" value="false"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            
+            <!-- Short Answer Questions -->
+            <ion-item *ngIf="getCurrentQuestion()?.type === QuestionType.SHORT_ANSWER || 
+                            getCurrentQuestion()?.type === 'shortAnswer' || 
+                            getCurrentQuestion()?.type === 'SHORT_ANSWER'">
+              <ion-label position="stacked">Your Answer:</ion-label>
+              <ion-input [formControlName]="'question_' + currentQuestionIndex" type="text"></ion-input>
+            </ion-item>
+          </form>
         </ion-card-content>
       </ion-card>
 
-      <div class="submit-button ion-padding ion-text-center">
+      <!-- ✅ QUESTION NAVIGATION BUTTONS -->
+      <div class="question-nav-buttons">
         <ion-button 
-          type="submit"
-          expand="block" 
-          color="primary" 
-          [disabled]="isSubmitting">
-          SUBMIT ASSESSMENT
+          fill="outline" 
+          [disabled]="currentQuestionIndex === 0"
+          (click)="previousQuestion()">
+          <ion-icon name="chevron-back" slot="start"></ion-icon>
+          Previous
+        </ion-button>
+        
+        <ion-button 
+          fill="outline"
+          [disabled]="currentQuestionIndex === currentQuestions.length - 1"
+          (click)="nextQuestion()">
+          Next
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
         </ion-button>
       </div>
-    </form>
+    </div>
+
+    <!-- ✅ ORIGINAL ALL-QUESTIONS VIEW (ALTERNATIVE) -->
+    <div class="all-questions-view" *ngIf="false" style="display: none;">
+      <!-- Keep your original form layout as backup -->
+      <form [formGroup]="assessmentForm" (ngSubmit)="submitAssessment()" *ngIf="assessmentForm && currentQuestions.length > 0">
+        <ion-card *ngFor="let question of currentQuestions; let i = index" class="question-card">
+          <ion-card-header>
+            <ion-card-subtitle>
+              Question {{ i+1 }} of {{ currentQuestions.length }}
+              <span *ngIf="selectedCategory" class="category-tag" [style.background-color]="selectedCategory.color">
+                {{ selectedCategory.name }}
+              </span>
+            </ion-card-subtitle>
+            <ion-card-title>{{ question.text }}</ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <!-- Multiple Choice Questions -->
+            <ion-list *ngIf="question.type === QuestionType.MULTIPLE_CHOICE || 
+                            question.type === 'multipleChoice' || 
+                            question.type === 'MULTIPLE_CHOICE'">
+              <ion-radio-group [formControlName]="'question_' + i">
+                <ion-item *ngFor="let option of question.options">
+                  <ion-label>{{ option }}</ion-label>
+                  <ion-radio slot="start" [value]="option"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            
+            <!-- True/False Questions -->
+            <ion-list *ngIf="question.type === QuestionType.TRUE_FALSE || 
+                            question.type === 'trueFalse' || 
+                            question.type === 'TRUE_FALSE'">
+              <ion-radio-group [formControlName]="'question_' + i">
+                <ion-item>
+                  <ion-label>True</ion-label>
+                  <ion-radio slot="start" value="true"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>False</ion-label>
+                  <ion-radio slot="start" value="false"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            
+            <!-- Short Answer Questions -->
+            <ion-item *ngIf="question.type === QuestionType.SHORT_ANSWER || 
+                            question.type === 'shortAnswer' || 
+                            question.type === 'SHORT_ANSWER'">
+              <ion-label position="stacked">Your Answer:</ion-label>
+              <ion-input [formControlName]="'question_' + i" type="text"></ion-input>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </form>
+    </div>
+
+    <!-- ✅ SUBMIT ASSESSMENT BUTTON -->
+    <div class="submit-section ion-padding">
+      <div class="completion-status ion-text-center ion-margin-bottom" *ngIf="progressPercentage < 100">
+        <ion-text color="warning">
+          <p>
+            <ion-icon name="warning-outline"></ion-icon>
+            You have {{ currentQuestions.length - answeredQuestions.size }} unanswered questions
+          </p>
+        </ion-text>
+      </div>
+      
+      <ion-button 
+        (click)="submitAssessment()"
+        expand="block" 
+        color="primary" 
+        size="large"
+        [disabled]="isSubmitting">
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        SUBMIT ASSESSMENT
+      </ion-button>
+    </div>
+
+    <!-- Debug info if no questions -->
+    <div *ngIf="!currentQuestions || currentQuestions.length === 0" class="ion-text-center ion-padding">
+      <p>Loading questions...</p>
+      <p *ngIf="selectedCategory"><small>Category: {{ selectedCategory.name }}, Difficulty: {{ getDifficultyLabel(selectedDifficulty) }}</small></p>
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div *ngIf="showResults && lastAssessmentResult" class="assessment-results ion-text-center">
+    <ion-card class="results-card">
+      <ion-card-header>
+        <ion-card-title>Assessment Complete!</ion-card-title>
+        <ion-card-subtitle *ngIf="selectedCategory">
+          {{ selectedCategory.name }} - {{ getDifficultyLabel(selectedDifficulty) }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <!-- Score Display -->
+        <div class="score-display">
+          <div class="score-circle" [class.passed]="lastAssessmentResult.passed" [class.failed]="!lastAssessmentResult.passed">
+            <div class="score-percentage">{{ getScorePercentage() || 0 }}%</div>
+            <div class="score-label">Final Score</div>
+          </div>
+        </div>
+
+        <!-- Result Status -->
+        <div class="result-status">
+          <ion-chip [color]="lastAssessmentResult.passed ? 'success' : 'danger'">
+            <ion-icon [name]="lastAssessmentResult.passed ? 'checkmark-circle' : 'close-circle'" slot="start"></ion-icon>
+            <ion-label>{{ lastAssessmentResult.passed ? 'PASSED' : 'FAILED' }}</ion-label>
+          </ion-chip>
+        </div>
+
+        <!-- Category Progress Info -->
+        <div class="category-progress-info" *ngIf="selectedCategory">
+          <h4>Your Progress in {{ selectedCategory.name }}</h4>
+          <div class="progress-details">
+            <p><strong>This Assessment:</strong> {{ lastAssessmentResult.score }} points</p>
+            <p><strong>Difficulty:</strong> {{ getDifficultyLabel(selectedDifficulty) }}</p>
+            <p><strong>Time Taken:</strong> {{ formatTime(lastAssessmentResult.timeTaken) }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="results-actions">
+          <ion-button fill="outline" expand="block" (click)="resetResults()" class="ion-margin-bottom">
+            <ion-icon slot="start" name="refresh-outline"></ion-icon>
+            Take Another Assessment
+          </ion-button>
+          
+          <ion-button expand="block" color="primary" (click)="startCategoryBasedAssessment()">
+            <ion-icon slot="start" name="albums-outline"></ion-icon>
+            Try Different Category
+          </ion-button>
+          
+          <ion-button [routerLink]="['/tabs/assessment/badges']" expand="block" color="secondary">
+            <ion-icon slot="start" name="ribbon-outline"></ion-icon>
+            View My Badges
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
   
   <!-- Loading State -->
   <div *ngIf="isSubmitting" class="loading-container ion-text-center">
-    <ion-spinner name="circles"></ion-spinner>
+    <ion-spinner name="circles" color="primary"></ion-spinner>
     <p>Submitting your assessment...</p>
   </div>
 </ion-content>

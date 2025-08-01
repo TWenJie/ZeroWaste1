@@ -1,3 +1,5 @@
+// src/app/authentication/auth.service.ts - COMPLETE FIXED VERSION WITH SOLUTION 1
+
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
@@ -11,6 +13,9 @@ import { SigninRequest, SignupRequest, VerifycodeRequest } from "../interfaces/a
 import { SigninResponse, SignupResponse } from "../interfaces/auth-response.interface";
 import { UpdatePasswordDto } from "../account/change-password-modal/change-password.component";
 
+// ✅ ADD MONGODB SERVICE IMPORT
+import { MongoDBService } from "../services/mongodb.service";
+
 @Injectable({
     providedIn: 'root'
 })
@@ -22,12 +27,13 @@ export class AuthService implements OnDestroy {
     private _token: string = null; 
     private _activeLogoutTimer: any;
 
-
     constructor(
         private http: HttpClient,
-        private router: Router
+        private router: Router,
+        // ✅ ADD MONGODB SERVICE INJECTION
+        private mongoService: MongoDBService
     ) {
-
+        console.log('🔐 AuthService initialized with MongoDB integration');
     }
 
     /**
@@ -54,29 +60,118 @@ export class AuthService implements OnDestroy {
     }
 
     /**
-     * Basic signin, signout and signup
+     * ✅ UPDATED LOGIN WITH MONGODB INTEGRATION
      */
     login(credentials:SigninRequest):Observable<SigninResponse>{
+        console.log('🔐 Starting login process for:', credentials.email);
+        
         return this.http.post<SigninResponse>(this._AUTH_URI+'/signin',credentials)
         .pipe(
-          tap(this.setUserData.bind(this))
+          tap(async (response) => {
+            // Original user data setting
+            this.setUserData(response);
+            
+            // ✅ INTEGRATE WITH MONGODB - Set current user for assessments
+            try {
+              console.log('📊 Setting MongoDB user for assessments:', response.email);
+              
+              await this.mongoService.setCurrentUser({
+                id: String(response.id), // ✅ Convert number to string
+                email: response.email,
+                username: response.profile?.userName || response.email.split('@')[0] // ✅ Use userName
+              });
+              
+              console.log('✅ MongoDB user integration successful');
+            } catch (error) {
+              console.error('❌ MongoDB user integration failed:', error);
+              // Don't fail the login if MongoDB integration fails
+            }
+          })
         );
     }
 
+    /**
+     * ✅ SOLUTION 1: COMPLETE SIGNUP FIX - No refreshToken assumptions
+     */
     signup(credentials:SignupRequest): Observable<SignupResponse>{
+        console.log('📝 Starting signup process for:', credentials.email);
+        
         return this.http.post<SignupResponse>(
           this._AUTH_URI+'/signup',
           credentials
         ).pipe(
-          tap(this.setUserData.bind(this))
+          tap(async (response) => {
+            // ✅ SOLUTION 1: Handle signup response directly without setUserData
+            try {
+              console.log('📝 Processing signup response for:', response.email);
+              
+              // Calculate expiration time
+              const tokenExpiresIn = response.tokenExpiresIn ? 
+                new Date(new Date().getTime() + +response.tokenExpiresIn * 1000) : 
+                new Date(Date.now() + 24 * 60 * 60 * 1000); // Default 24 hours
+              
+              // Create user directly from signup response
+              const user = new User(
+                response.id,
+                response.email,
+                response.isEmailVerified ?? false,
+                response.role ?? 'user',
+                response.profile ?? null,
+                response.accessToken ?? '',
+                '', // ✅ No refreshToken assumption - empty string
+                tokenExpiresIn
+              );
+
+              // Store user data manually (same as setUserData but without refreshToken requirement)
+              const jsonUser = JSON.stringify(user);
+              await Storage.set({key:'AUTH_USER', value:jsonUser});
+              await Storage.set({key:'ACCESS_TOKEN', value: user.accessToken});
+              
+              // ✅ Only set refresh token if it exists in response
+              if ((response as any).refreshToken) {
+                await Storage.set({key:'REFRESH_TOKEN', value: (response as any).refreshToken});
+              }
+
+              // Update reactive state
+              this._user$.next(user);
+              this._token = user.accessToken;
+              
+              console.log('✅ User signup data processed successfully');
+              
+            } catch (userError) {
+              console.error('❌ Error processing user signup data:', userError);
+            }
+            
+            // ✅ INTEGRATE WITH MONGODB - Register new user for assessments
+            try {
+              console.log('📊 Registering new MongoDB user for assessments:', response.email);
+              
+              await this.mongoService.registerUser(
+                response.email,
+                credentials.username || response.email.split('@')[0],
+                credentials.password // Won't be stored in MongoDB, just for API consistency
+              );
+              
+              console.log('✅ MongoDB user registration successful');
+            } catch (mongoError) {
+              console.error('❌ MongoDB user registration failed:', mongoError);
+              // Don't fail the signup if MongoDB integration fails
+            }
+          })
         );
     }
     
+    /**
+     * ✅ UPDATED LOGOUT WITH MONGODB INTEGRATION
+     */
     logout(){
-        // console.log('Log out...:')
+        console.log('🔐 Starting logout process...');
+        
         if(this._activeLogoutTimer){
           clearTimeout(this._activeLogoutTimer);
         }
+        
+        // Original logout logic
         this._user$.next(null);
         this._isAuthed$.next(false);
         this._token=null;
@@ -84,41 +179,126 @@ export class AuthService implements OnDestroy {
         Storage.remove({key:'AUTH_USER'}); 
         Storage.remove({key:'ACCESS_TOKEN'});
         Storage.remove({key:'REFRESH_TOKEN'});
+        
+        // ✅ INTEGRATE WITH MONGODB - Clear MongoDB user session
+        try {
+          this.mongoService.logout();
+          console.log('✅ MongoDB user session cleared');
+        } catch (error) {
+          console.error('❌ MongoDB logout failed:', error);
+        }
+        
         return this.router.navigateByUrl('welcome');
     }
 
     /**
-     * Auto Login, get stored cookies, containing user object,
-     * then load into this._user$ and this._token;
+     * ✅ UPDATED AUTO LOGIN WITH MONGODB INTEGRATION - FIXED ASYNC ISSUE
      */
-
     autoLogin() : Observable<boolean>{
+        console.log('🔐 Attempting auto login...');
+        
         return from(Storage.get({
             key: 'AUTH_USER'
         })).pipe(
-            map((storedData)=>{
+            switchMap(async (storedData) => { // ✅ Use switchMap for async operations
                 if(!storedData || !storedData.value){
                     this._user$.next(null);
                     return false;
                 }
-                //else create user and return true;
-                const storedUser = JSON.parse(storedData.value) as User;
-                const user = new User(
-                    storedUser.id,
-                    storedUser.email,
-                    storedUser._isEmailVerified,
-                    storedUser._role,
-                    storedUser._profile,
-                    storedUser._accessToken,
-                    storedUser._refreshToken,
-                    storedUser._tokenExpiresIn
-                );
-                const expiredIn = user.tokenExpiresIn;
-                this._user$.next(user);
-                this._token=user.accessToken;
-                return !!user;
+                
+                try {
+                  //else create user and return true;
+                  const storedUser = JSON.parse(storedData.value) as User;
+                  const user = new User(
+                      storedUser.id,
+                      storedUser.email,
+                      storedUser._isEmailVerified,
+                      storedUser._role,
+                      storedUser._profile,
+                      storedUser._accessToken,
+                      storedUser._refreshToken,
+                      storedUser._tokenExpiresIn
+                  );
+                  
+                  const expiredIn = user.tokenExpiresIn;
+                  this._user$.next(user);
+                  this._token=user.accessToken;
+                  
+                  // ✅ INTEGRATE WITH MONGODB - Restore MongoDB user session
+                  try {
+                    console.log('📊 Restoring MongoDB user session for:', user.email);
+                    
+                    await this.mongoService.setCurrentUser({
+                      id: String(user.id), // ✅ Convert number to string
+                      email: user.email,
+                      username: user.profile?.userName || user.email.split('@')[0] // ✅ Use userName
+                    });
+                    
+                    console.log('✅ MongoDB user session restored');
+                  } catch (error) {
+                    console.error('❌ MongoDB session restoration failed:', error);
+                  }
+                  
+                  return !!user;
+                } catch (parseError) {
+                  console.error('❌ Error parsing stored user data:', parseError);
+                  this._user$.next(null);
+                  return false;
+                }
             })
         )
+    }
+
+    /**
+     * ✅ NEW METHOD - Get current user info for MongoDB integration
+     */
+    getCurrentUserForMongoDB(): { id: string, email: string, username: string } | null {
+        const currentUser = this._user$.value;
+        if (!currentUser) {
+            return null;
+        }
+        
+        return {
+            id: String(currentUser.id), // ✅ Convert number to string
+            email: currentUser.email,
+            username: currentUser.profile?.userName || currentUser.email.split('@')[0] // ✅ Use userName
+        };
+    }
+
+    /**
+     * ✅ NEW METHOD - Check if MongoDB integration is ready
+     */
+    isMongoDBIntegrationReady(): boolean {
+        const currentUser = this._user$.value;
+        const mongoUser = this.mongoService.getCurrentUser();
+        
+        return !!(currentUser && mongoUser && currentUser.email === mongoUser.email);
+    }
+
+    /**
+     * ✅ NEW METHOD - Force MongoDB sync if needed
+     */
+    async syncWithMongoDB(): Promise<void> {
+        const currentUser = this._user$.value;
+        if (!currentUser) {
+            console.log('⚠️ No current user to sync with MongoDB');
+            return;
+        }
+
+        try {
+            console.log('🔄 Force syncing with MongoDB for:', currentUser.email);
+            
+            await this.mongoService.setCurrentUser({
+                id: String(currentUser.id), // ✅ Convert number to string
+                email: currentUser.email,
+                username: currentUser.profile?.userName || currentUser.email.split('@')[0] // ✅ Use userName
+            });
+            
+            console.log('✅ MongoDB sync completed');
+        } catch (error) {
+            console.error('❌ MongoDB sync failed:', error);
+            throw error;
+        }
     }
 
     /**
@@ -126,8 +306,6 @@ export class AuthService implements OnDestroy {
      * make use of tokenExpiresIn value to auto logout user.
      * @param duration 
      */
-
-
     autoLogout(duration:number){
         if(this._activeLogoutTimer){
           clearTimeout(this._activeLogoutTimer);
@@ -142,16 +320,11 @@ export class AuthService implements OnDestroy {
      * and verify it.
      */
     getCode():Observable<boolean>{
-        // console.log('token:',this.token);
-    
-        // const headers = this.httpHeader
-        // console.log('Get_code_header:',headers);
         return this.http.post(
           this._AUTH_URI+'/getCode',
           {},
           {
             observe:'response',
-            // headers
           }
         ).pipe(
           map((response)=>{
@@ -165,8 +338,6 @@ export class AuthService implements OnDestroy {
     }
     
     verifyCode(credentials:VerifycodeRequest):Observable<boolean>{
-        //200 == success
-        // const headers = this.httpHeader;
         return this.http.post(
           this._AUTH_URI+'/verifyCode',
           {
@@ -174,7 +345,6 @@ export class AuthService implements OnDestroy {
           },
           {
             observe: 'response',
-            // headers
           }
         ).pipe(
           map((response)=>{
@@ -195,10 +365,8 @@ export class AuthService implements OnDestroy {
     }
 
     /**
-     * 
      * Token management, refresh and set new accessToken
      */
-
     getNewAccessToken(){
         return from (Storage.get({
             key: 'REFRESH_TOKEN'
@@ -216,7 +384,6 @@ export class AuthService implements OnDestroy {
         );
     }
 
-
     setAccessToken(token:string){
         return this._user$.pipe(
             tap(user=>{
@@ -230,10 +397,11 @@ export class AuthService implements OnDestroy {
     }
 
     /**
-     * Storage Management, stored, data to local storage.
+     * ✅ ORIGINAL setUserData - Used only for login (SigninResponse)
      */
-
     setUserData(responseData:SigninResponse){
+        console.log('🔐 Setting user data for:', responseData.email);
+        
         const expiredTime = responseData.tokenExpiresIn;
         const expirationTime = new Date(new Date().getTime()+ +expiredTime *1000);
         
@@ -255,11 +423,12 @@ export class AuthService implements OnDestroy {
 
         const expiredIn = user.tokenExpiresIn;
         this._user$.next(user);
+        
+        console.log('✅ User data set successfully');
     }
 
-    
-
     ngOnDestroy(): void {
+        console.log('🧹 AuthService cleanup...');
         if(this._activeLogoutTimer){
             clearTimeout(this._activeLogoutTimer);
         }

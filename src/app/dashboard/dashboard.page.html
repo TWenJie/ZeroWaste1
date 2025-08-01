@@ -1,0 +1,239 @@
+<!-- src/app/dashboard/dashboard.page.html -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title color="light">📊 Real Data Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="light" (click)="refreshRealData()">
+        <ion-icon name="refresh" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <div class="dashboard-container">
+    
+    <!-- Status Banner -->
+    <ion-card class="status-banner">
+      <ion-card-content>
+        <div class="status-content">
+          <ion-icon name="analytics" color="light" size="large"></ion-icon>
+          <div class="status-text">
+            <h2>📊 LIVE Backend Data Dashboard</h2>
+            <p>{{ connectionStatus }} • Data: {{ dataSource }}</p>
+          </div>
+          <ion-badge [color]="isMongoConnected ? 'success' : 'warning'" class="status-badge">
+            {{ isMongoConnected ? 'MongoDB LIVE' : 'Local Only' }}
+          </ion-badge>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Stats Grid with Real Data -->
+    <div class="stats-grid">
+      <ion-card class="stat-card">
+        <ion-card-content class="stat-content">
+          <div class="stat-icon">
+            <ion-icon name="document-text" color="primary"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ realAssessmentData.totalAssessments }}</h3>
+            <p>Real Assessments</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="stat-card">
+        <ion-card-content class="stat-content">
+          <div class="stat-icon">
+            <ion-icon name="trending-up" color="success"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ realAssessmentData.averageScore }}</h3>
+            <p>Average Score</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="stat-card">
+        <ion-card-content class="stat-content">
+          <div class="stat-icon">
+            <ion-icon name="time" color="warning"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ realAssessmentData.studyTime }}m</h3>
+            <p>Study Time</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="stat-card">
+        <ion-card-content class="stat-content">
+          <div class="stat-icon">
+            <ion-icon name="trophy" color="tertiary"></ion-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ realAssessmentData.badgesEarned }}</h3>
+            <p>Badges Earned</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Chart.js Score Progress Chart -->
+    <ion-card class="chart-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="bar-chart" color="primary"></ion-icon>
+          Your Real Assessment Scores (Chart.js)
+        </ion-card-title>
+        <ion-card-subtitle>Interactive chart showing your actual performance</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #scoreChart></canvas>
+        </div>
+        <div class="chart-info">
+          <p class="chart-note">
+            📈 <strong>Real Progress:</strong> From {{ realAssessmentData.scoreHistory[0] }} to {{ realAssessmentData.scoreHistory[2] }}
+          </p>
+          <ion-chip color="success">
+            <ion-icon name="trending-up"></ion-icon>
+            <ion-label>Real Data Chart</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Chart.js Weekly Activity Chart -->
+    <ion-card class="chart-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="pulse" color="success"></ion-icon>
+          Weekly Activity Pattern (Chart.js)
+        </ion-card-title>
+        <ion-card-subtitle>Line chart showing your daily assessment activity</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas #progressChart></canvas>
+        </div>
+        <div class="chart-info">
+          <p class="chart-note">
+            📅 <strong>This Week:</strong> 5 total assessments completed
+          </p>
+          <ion-chip color="primary">
+            <ion-icon name="pulse"></ion-icon>
+            <ion-label>Activity Chart</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Data Source Info -->
+    <ion-card class="data-source-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="server" color="success"></ion-icon>
+          Backend Integration Status
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="integration-status">
+          <div class="status-item">
+            <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            <span>Assessment Service Connected</span>
+          </div>
+          <div class="status-item">
+            <ion-icon name="cloud-done" color="success"></ion-icon>
+            <span>MongoDB Database Active</span>
+          </div>
+          <div class="status-item">
+            <ion-icon name="analytics" color="primary"></ion-icon>
+            <span>Chart.js Visualization Ready</span>
+          </div>
+          <div class="status-item">
+            <ion-icon name="sync" color="primary"></ion-icon>
+            <span>Real-time Chart Updates</span>
+          </div>
+        </div>
+        
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          color="primary" 
+          class="test-button"
+          (click)="testLiveBackendConnection()">
+          <ion-icon name="flash" slot="start"></ion-icon>
+          Test LIVE Backend Connection
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Technical Demo Section -->
+    <ion-card class="feature-demo-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="construct" color="warning"></ion-icon>
+          Real Backend Features
+        </ion-card-title>
+        <ion-card-subtitle>Actual data integration capabilities</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="demo-grid">
+          <div class="demo-item">
+            <ion-icon name="analytics" color="primary"></ion-icon>
+            <div>
+              <h4>Real Data Charts</h4>
+              <p>Charts display your actual assessment scores</p>
+            </div>
+          </div>
+          <div class="demo-item">
+            <ion-icon name="database" color="success"></ion-icon>
+            <div>
+              <h4>Live Backend</h4>
+              <p>Connected to MongoDB and Assessment Service</p>
+            </div>
+          </div>
+          <div class="demo-item">
+            <ion-icon name="person" color="tertiary"></ion-icon>
+            <div>
+              <h4>User: {{ realAssessmentData.userId }}</h4>
+              <p>Real user with {{ realAssessmentData.totalAssessments }} assessments</p>
+            </div>
+          </div>
+          <div class="demo-item">
+            <ion-icon name="trending-up" color="warning"></ion-icon>
+            <div>
+              <h4>{{ realAssessmentData.awarenessLevel }} Level</h4>
+              <p>{{ realAssessmentData.improvementTrend | titlecase }} trend</p>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Quick Actions -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="primary" routerLink="/tabs" class="primary-action">
+        <ion-icon name="home" slot="start"></ion-icon>
+        Back to Assessment App
+      </ion-button>
+      
+      <div class="button-row">
+        <ion-button expand="block" fill="outline" color="secondary" (click)="refreshRealData()">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Refresh Live Data
+        </ion-button>
+        <ion-button expand="block" fill="outline" color="tertiary" (click)="testLiveBackendConnection()">
+          <ion-icon name="flash" slot="start"></ion-icon>
+          Test Live Backend
+        </ion-button>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,44 +1,231 @@
 <!-- src/app/assessment/leaderboard.component.html -->
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/assessment"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Leaderboard</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="leaderboard-content">
+  <!-- Header with controls -->
+  <div class="leaderboard-header">
+    <div class="header-title">
+      <h2>🏆 Leaderboard</h2>
+      <p class="last-updated">{{ getLastUpdatedText() }}</p>
+    </div>
 
-<ion-content class="ion-padding">
-  <div *ngIf="loading" class="ion-text-center ion-padding">
-    <ion-spinner name="circles"></ion-spinner>
-    <p>Loading leaderboard data...</p>
+    <!-- Real-time toggle -->
+    <div class="real-time-controls">
+      <ion-button 
+        fill="clear" 
+        size="small"
+        (click)="toggleRealTimeUpdates()"
+        [color]="isRealTimeEnabled ? 'success' : 'medium'">
+        <ion-icon [name]="isRealTimeEnabled ? 'radio-button-on' : 'radio-button-off'" slot="start"></ion-icon>
+        Real-time
+      </ion-button>
+      <ion-button fill="clear" size="small" (click)="refreshLeaderboard()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        Refresh
+      </ion-button>
+    </div>
   </div>
-  
-  <div *ngIf="!loading && leaderboard.length === 0" class="ion-text-center ion-padding">
-    <ion-icon name="trophy-outline" style="font-size: 64px; color: var(--ion-color-medium);"></ion-icon>
-    <h2>No Leaderboard Data Yet</h2>
-    <p>Be the first to complete an assessment and appear on the leaderboard!</p>
-    <ion-button routerLink="/tabs/assessment">Take an Assessment</ion-button>
+
+  <!-- Timeframe selector -->
+  <div class="timeframe-selector">
+    <ion-segment [(ngModel)]="selectedTimeframe" (ionChange)="setTimeframe($event.detail.value)">
+      <ion-segment-button value="DAILY">
+        <ion-label>Today</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="WEEKLY">
+        <ion-label>Week</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="MONTHLY">
+        <ion-label>Month</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ALL_TIME">
+        <ion-label>All Time</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </div>
-  
-  <ion-list *ngIf="!loading && leaderboard.length > 0">
-    <ion-list-header>
-      <ion-label>Top Scorers</ion-label>
-    </ion-list-header>
-  
-    <ion-item *ngFor="let entry of leaderboard" [class.current-user]="isCurrentUser(entry)">
-      <ion-badge slot="start" [color]="getRankColor(entry.rank)">{{ entry.rank }}</ion-badge>
-      <ion-label>
-        <h2>{{ entry.userName }}</h2>
-        <p>Score: {{ entry.score }}</p>
-      </ion-label>
-      <ion-note slot="end" *ngIf="isCurrentUser(entry)">You</ion-note>
-    </ion-item>
-  </ion-list>
-  
-  <div class="ion-text-center ion-padding" *ngIf="!loading && leaderboard.length > 0">
-    <ion-button routerLink="/tabs/assessment" fill="outline">
-      Improve Your Ranking
+
+  <!-- View selector -->
+  <div class="view-selector">
+    <ion-segment [(ngModel)]="selectedView" (ionChange)="setView($event.detail.value)">
+      <ion-segment-button value="overall">
+        <ion-label>Overall</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="improved">
+        <ion-label>Most Improved</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="active">
+        <ion-label>Most Active</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading leaderboard...</p>
+  </div>
+
+  <!-- Leaderboard entries -->
+  <div *ngIf="!loading && filteredLeaderboard.length > 0" class="leaderboard-list">
+    <ion-card 
+      *ngFor="let entry of filteredLeaderboard; trackBy: trackByUserId; let i = index"
+      class="leaderboard-entry"
+      [class.current-user]="isCurrentUser(entry)"
+      [class.recently-updated]="isRecentlyUpdated(entry.id)"
+      [class.top-performer]="isTopPerformer(entry.rank)"
+      [ngClass]="'rank-position-' + entry.rank">
+      
+      <!-- Rank indicator -->
+      <div class="rank-indicator">
+        <span class="rank-number" [ngClass]="'rank-' + entry.rank">
+          <span *ngIf="entry.rank <= 3" class="trophy-icon">
+            {{ entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉' }}
+          </span>
+          <span *ngIf="entry.rank > 3">#{{ entry.rank }}</span>
+        </span>
+        
+        <!-- Ranking change indicator -->
+        <div *ngIf="hasRankingChange(entry.id)" 
+             class="rank-change" 
+             [ngClass]="getRankingChangeClass(entry.id)">
+          {{ getRankingChangeText(entry.id) }}
+        </div>
+      </div>
+
+      <!-- User info -->
+      <div class="user-info">
+        <div class="user-avatar">
+          <img *ngIf="entry.avatarUrl" [src]="entry.avatarUrl" [alt]="entry.displayName || entry.userName">
+          <ion-icon *ngIf="!entry.avatarUrl" name="person-circle" size="large"></ion-icon>
+          
+          <!-- Online indicator -->
+          <div *ngIf="entry.isOnline" class="online-indicator"></div>
+        </div>
+
+        <div class="user-details">
+          <h3 class="user-name">
+            {{ entry.displayName || entry.userName }}
+            <ion-icon *ngIf="isCurrentUser(entry)" name="star" color="warning" class="current-user-star"></ion-icon>
+          </h3>
+          
+          <div class="user-stats">
+            <ion-chip class="level-chip" [color]="entry.level === 'Advanced' ? 'danger' : entry.level === 'Intermediate' ? 'warning' : 'success'">
+              {{ getDifficultyDisplay(entry.level) }}
+            </ion-chip>
+            <ion-chip class="awareness-chip" color="medium" *ngIf="entry.awarenessLevel">
+              {{ getAwarenessDisplay(entry.awarenessLevel) }}
+            </ion-chip>
+          </div>
+
+          <div class="activity-status">
+            <ion-badge [color]="getUserActivityStatus(entry).color" class="activity-badge">
+              {{ getUserActivityStatus(entry).status }}
+            </ion-badge>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance metrics -->
+      <div class="performance-metrics">
+        <div class="metric-item">
+          <span class="metric-value">{{ entry.averageScore }}%</span>
+          <span class="metric-label">Avg Score</span>
+          <ion-progress-bar 
+            [value]="entry.averageScore / 100" 
+            [color]="entry.averageScore >= 80 ? 'success' : entry.averageScore >= 60 ? 'warning' : 'danger'">
+          </ion-progress-bar>
+        </div>
+
+        <div class="metric-item">
+          <span class="metric-value">{{ formatNumber(entry.totalAssessments) }}</span>
+          <span class="metric-label">Assessments</span>
+        </div>
+
+        <div class="metric-item">
+          <span class="metric-value">{{ entry.streak }}</span>
+          <span class="metric-label">Streak</span>
+          <ion-icon *ngIf="entry.streak >= 5" name="flame" color="warning" class="streak-icon"></ion-icon>
+        </div>
+
+        <div class="metric-item">
+          <span class="metric-value">{{ entry.badges }}</span>
+          <span class="metric-label">Badges</span>
+          <ion-icon *ngIf="entry.badges > 0" name="ribbon" color="secondary" class="badge-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Improvement trend -->
+      <div class="improvement-trend" *ngIf="entry.improvementTrend">
+        <ion-chip 
+          [color]="getImprovementDisplay(entry.improvementTrend).color"
+          class="trend-chip">
+          <span class="trend-icon">{{ getImprovementDisplay(entry.improvementTrend).icon }}</span>
+          <ion-label>{{ getImprovementDisplay(entry.improvementTrend).text }}</ion-label>
+        </ion-chip>
+      </div>
+
+      <!-- Additional stats (expandable) -->
+      <div class="additional-stats" *ngIf="isTopPerformer(entry.rank)">
+        <div class="stat-row">
+          <span class="stat-item">
+            <ion-icon name="time" color="medium"></ion-icon>
+            {{ entry.studyTime || 0 }}min study
+          </span>
+          <span class="stat-item">
+            <ion-icon name="trophy" color="medium"></ion-icon>
+            {{ entry.perfectScoreCount || 0 }} perfect
+          </span>
+          <span class="stat-item" *ngIf="entry.followers">
+            <ion-icon name="people" color="medium"></ion-icon>
+            {{ entry.followers }} followers
+          </span>
+        </div>
+      </div>
+
+      <!-- Country flag -->
+      <div class="country-indicator" *ngIf="entry.countryCode">
+        <img [src]="'assets/flags/' + entry.countryCode.toLowerCase() + '.png'" 
+             [alt]="entry.countryCode"
+             class="country-flag"
+             onerror="this.style.display='none'">
+      </div>
+
+      <!-- Recent update indicator -->
+      <div *ngIf="isRecentlyUpdated(entry.id)" class="update-indicator">
+        <ion-icon name="sync" color="primary" class="spinning"></ion-icon>
+        <span class="update-text">Recently updated!</span>
+      </div>
+    </ion-card>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && filteredLeaderboard.length === 0" class="empty-state">
+    <ion-icon name="trophy" size="large" color="medium" class="empty-trophy"></ion-icon>
+    <h3>No rankings yet</h3>
+    <p>Complete your first assessment to appear on the leaderboard!</p>
+    <ion-button routerLink="/assessment" fill="solid" color="primary" class="cta-button">
+      <ion-icon name="play" slot="start"></ion-icon>
+      Take Assessment
+    </ion-button>
+  </div>
+
+  <!-- Real-time update indicator -->
+  <div *ngIf="isRealTimeEnabled && !loading" class="real-time-indicator">
+    <ion-icon name="radio" color="success" class="pulse"></ion-icon>
+    <span>Live updates enabled</span>
+    <div class="pulse-dot"></div>
+  </div>
+
+  <!-- Debug panel (only in development) -->
+  <div class="debug-panel" *ngIf="false">
+    <h4>Debug Info</h4>
+    <p>Total entries: {{ leaderboard.length }}</p>
+    <p>Filtered entries: {{ filteredLeaderboard.length }}</p>
+    <p>Recent updates: {{ recentlyUpdatedUsers.size }}</p>
+    <p>Ranking changes: {{ rankingChanges.size }}</p>
+    <ion-button size="small" fill="outline" (click)="debugSubmission()">
+      Test Submission
+    </ion-button>
+    <ion-button size="small" fill="outline" (click)="manualRefreshProgress()">
+      Manual Refresh
     </ion-button>
   </div>
 </ion-content>
